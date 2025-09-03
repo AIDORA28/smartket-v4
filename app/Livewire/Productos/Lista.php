@@ -105,8 +105,8 @@ class Lista extends Component
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('nombre', 'like', '%' . $this->search . '%')
-                  ->orWhere('codigo', 'like', '%' . $this->search . '%')
-                  ->orWhere('codigo_barras', 'like', '%' . $this->search . '%');
+                  ->orWhere('codigo_interno', 'like', '%' . $this->search . '%')
+                  ->orWhere('codigo_barra', 'like', '%' . $this->search . '%');
             });
         }
 

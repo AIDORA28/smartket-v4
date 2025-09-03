@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('caja_movimientos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empresa_id')->constrained()->onDelete('cascade');
-            $table->foreignId('caja_sesion_id')->constrained()->onDelete('cascade');
+            $table->foreignId('caja_sesion_id')->constrained('caja_sesiones')->onDelete('cascade');
             $table->string('tipo', 15)->comment('ingreso/retiro/venta_efectivo');
             $table->decimal('monto', 14, 2)->comment('Monto del movimiento');
             $table->string('concepto', 120)->comment('Concepto del movimiento');
             $table->string('referencia_tipo', 20)->nullable()->comment('venta/gasto/reposicion');
             $table->unsignedBigInteger('referencia_id')->nullable()->comment('ID del documento relacionado');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('Usuario que registra el movimiento');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->comment('Usuario que registra el movimiento');
             $table->dateTime('fecha')->comment('Fecha y hora del movimiento');
             $table->timestamp('created_at')->nullable();
             

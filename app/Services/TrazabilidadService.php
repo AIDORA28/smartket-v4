@@ -169,7 +169,7 @@ class TrazabilidadService
                 $query->where('codigo_lote', 'like', "%{$termino}%")
                       ->orWhereHas('producto', function($q) use ($termino) {
                           $q->where('nombre', 'like', "%{$termino}%")
-                            ->orWhere('codigo', 'like', "%{$termino}%");
+                            ->orWhere('codigo_interno', 'like', "%{$termino}%");
                       });
             })
             ->with(['producto', 'proveedor'])

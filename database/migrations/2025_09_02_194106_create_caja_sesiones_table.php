@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('caja_sesiones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empresa_id')->constrained()->onDelete('cascade');
-            $table->foreignId('caja_id')->constrained()->onDelete('cascade');
+            $table->foreignId('caja_id')->constrained('cajas')->onDelete('cascade');
             $table->foreignId('user_apertura_id')->constrained('users')->onDelete('cascade')
                   ->comment('Usuario que abre la sesión');
             $table->foreignId('user_cierre_id')->nullable()->constrained('users')->onDelete('set null')

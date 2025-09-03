@@ -20,7 +20,8 @@ class Empresa extends Model
         'allow_negative_stock',
         'precio_incluye_igv',
         'timezone',
-        'connection_name'
+        'connection_name',
+        'activa'
     ];
 
     protected $casts = [
@@ -29,6 +30,7 @@ class Empresa extends Model
         'sucursales_enabled' => 'boolean',
         'allow_negative_stock' => 'boolean',
         'precio_incluye_igv' => 'boolean',
+        'activa' => 'boolean',
     ];
 
     // Relationships

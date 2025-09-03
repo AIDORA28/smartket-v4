@@ -40,7 +40,7 @@ return new class extends Migration
         if (Schema::hasTable('producto_stocks')) {
             Schema::table('producto_stocks', function (Blueprint $table) {
                 if (!Schema::hasColumn('producto_stocks', 'alerta_vencimiento_dias')) {
-                    $table->integer('alerta_vencimiento_dias')->default(30)->after('stock_maximo')->comment('Días antes del vencimiento para alertar');
+                    $table->integer('alerta_vencimiento_dias')->default(30)->after('ultimo_movimiento')->comment('Días antes del vencimiento para alertar');
                 }
                 if (!Schema::hasColumn('producto_stocks', 'maneja_lotes')) {
                     $table->boolean('maneja_lotes')->default(false)->after('alerta_vencimiento_dias')->comment('Si el producto maneja control por lotes');

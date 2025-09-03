@@ -28,10 +28,10 @@ return new class extends Migration
             $table->datetime('fecha_movimiento')->comment('Fecha y hora del movimiento');
             $table->timestamps();
             
-            $table->index(['empresa_id', 'producto_id', 'fecha_movimiento']);
-            $table->index(['sucursal_id', 'fecha_movimiento']);
-            $table->index(['tipo_movimiento', 'fecha_movimiento']);
-            $table->index(['referencia_tipo', 'referencia_id']);
+            $table->index(['empresa_id', 'producto_id', 'fecha_movimiento'], 'inv_mov_emp_prod_fecha_idx');
+            $table->index(['sucursal_id', 'fecha_movimiento'], 'inv_mov_suc_fecha_idx');
+            $table->index(['tipo_movimiento', 'fecha_movimiento'], 'inv_mov_tipo_fecha_idx');
+            $table->index(['referencia_tipo', 'referencia_id'], 'inv_mov_ref_tipo_id_idx');
         });
     }
 

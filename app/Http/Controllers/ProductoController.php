@@ -344,7 +344,7 @@ class ProductoController extends Controller
                 ->active()
                 ->where(function ($query) use ($term) {
                     $query->where('nombre', 'like', "%{$term}%")
-                          ->orWhere('codigo_barras', 'like', "%{$term}%")
+                          ->orWhere('codigo_barra', 'like', "%{$term}%")
                           ->orWhere('codigo_interno', 'like', "%{$term}%");
                 })
                 ->with(['categoria', 'stocks'])

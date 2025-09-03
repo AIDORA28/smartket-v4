@@ -30,21 +30,21 @@ try {
     echo "1. Verificando estructura de base de datos...\n";
     
     // Verificar tabla reportes
-    $reportes = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name='reportes'");
+    $reportes = DB::select("SHOW TABLES LIKE 'reportes'");
     if (empty($reportes)) {
         throw new Exception("❌ Tabla 'reportes' no existe");
     }
     echo "✅ Tabla 'reportes' existe\n";
     
     // Verificar tabla reporte_templates
-    $templates = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name='reporte_templates'");
+    $templates = DB::select("SHOW TABLES LIKE 'reporte_templates'");
     if (empty($templates)) {
         throw new Exception("❌ Tabla 'reporte_templates' no existe");
     }
     echo "✅ Tabla 'reporte_templates' existe\n";
     
     // Verificar tabla analytics_eventos
-    $analytics = DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name='analytics_eventos'");
+    $analytics = DB::select("SHOW TABLES LIKE 'analytics_eventos'");
     if (empty($analytics)) {
         throw new Exception("❌ Tabla 'analytics_eventos' no existe");
     }

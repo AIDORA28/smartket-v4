@@ -80,7 +80,7 @@ try {
     echo "   - VentaService cargado: SI\n";
     
     // Verificar último número de venta
-    $ultimoNumero = Venta::max('numero');
+    $ultimoNumero = Venta::max('numero_venta');
     echo "   - Último número de venta: " . ($ultimoNumero ?: 'Ninguno') . "\n\n";
 
     // Verificar multi-tenancy
