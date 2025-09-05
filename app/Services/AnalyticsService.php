@@ -67,7 +67,7 @@ class AnalyticsService
     private function obtenerMetricasVentas(int $empresaId, $fechaInicio, $fechaFin, ?int $sucursalId): array
     {
         $query = Venta::where('empresa_id', $empresaId)
-            ->whereBetween('fecha', [$fechaInicio, $fechaFin]);
+            ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
 
         if ($sucursalId) {
             $query->where('sucursal_id', $sucursalId);
@@ -81,8 +81,8 @@ class AnalyticsService
         // Ventas por día (últimos 30 días)
         $ventasPorDia = Venta::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->where('fecha', '>=', Carbon::now()->subDays(30))
-            ->selectRaw('DATE(fecha) as fecha, COUNT(*) as cantidad, SUM(total) as monto')
+            ->where('fecha_venta', '>=', Carbon::now()->subDays(30))
+            ->selectRaw('DATE(fecha_venta) as fecha, COUNT(*) as cantidad, SUM(total) as monto')
             ->groupBy('fecha')
             ->orderBy('fecha')
             ->get();
@@ -93,7 +93,7 @@ class AnalyticsService
             ->join('productos as p', 'vd.producto_id', '=', 'p.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
             ->selectRaw('p.nombre, SUM(vd.cantidad) as cantidad_vendida, SUM(vd.subtotal) as ingresos')
             ->groupBy('p.id', 'p.nombre')
             ->orderByDesc('cantidad_vendida')
@@ -120,13 +120,13 @@ class AnalyticsService
         $stockBajo = ProductoStock::join('productos', 'producto_stocks.producto_id', '=', 'productos.id')
             ->where('productos.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('producto_stocks.sucursal_id', $sucursalId))
-            ->whereRaw('producto_stocks.stock_actual <= productos.stock_minimo')
+            ->whereRaw('producto_stocks.cantidad_actual <= productos.stock_minimo')
             ->count();
 
         $sinStock = ProductoStock::join('productos', 'producto_stocks.producto_id', '=', 'productos.id')
             ->where('productos.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('producto_stocks.sucursal_id', $sucursalId))
-            ->where('producto_stocks.stock_actual', 0)
+            ->where('producto_stocks.cantidad_actual', 0)
             ->count();
 
         // Productos más rentables
@@ -135,15 +135,15 @@ class AnalyticsService
             ->join('productos as p', 'vd.producto_id', '=', 'p.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
             ->selectRaw('
                 p.nombre,
                 SUM(vd.cantidad) as cantidad_vendida,
                 SUM(vd.subtotal) as ingresos,
-                SUM(vd.cantidad * p.costo_unitario) as costos,
-                SUM(vd.subtotal) - SUM(vd.cantidad * p.costo_unitario) as utilidad
+                SUM(vd.cantidad * p.precio_costo) as costos,
+                SUM(vd.subtotal) - SUM(vd.cantidad * p.precio_costo) as utilidad
             ')
-            ->groupBy('p.id', 'p.nombre', 'p.costo_unitario')
+            ->groupBy('p.id', 'p.nombre', 'p.precio_costo')
             ->orderByDesc('utilidad')
             ->limit(10)
             ->get();
@@ -165,7 +165,7 @@ class AnalyticsService
         $totalClientes = Cliente::where('empresa_id', $empresaId)->count();
         $clientesActivos = Cliente::where('empresa_id', $empresaId)
             ->whereHas('ventas', function($q) use ($fechaInicio, $fechaFin, $sucursalId) {
-                $q->whereBetween('fecha', [$fechaInicio, $fechaFin]);
+                $q->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
                 if ($sucursalId) {
                     $q->where('sucursal_id', $sucursalId);
                 }
@@ -175,7 +175,7 @@ class AnalyticsService
         // Top clientes por compras
         $topClientes = Cliente::where('empresa_id', $empresaId)
             ->withSum(['ventas' => function($q) use ($fechaInicio, $fechaFin, $sucursalId) {
-                $q->whereBetween('fecha', [$fechaInicio, $fechaFin]);
+                $q->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
                 if ($sucursalId) {
                     $q->where('sucursal_id', $sucursalId);
                 }
@@ -203,7 +203,7 @@ class AnalyticsService
             ->join('productos as p', 'ps.producto_id', '=', 'p.id')
             ->where('p.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('ps.sucursal_id', $sucursalId))
-            ->sum(DB::raw('ps.stock_actual * p.costo_unitario'));
+            ->sum(DB::raw('ps.cantidad_actual * p.precio_costo'));
 
         $movimientosRecientes = InventarioMovimiento::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
@@ -225,10 +225,10 @@ class AnalyticsService
     {
         $sesiones = CajaSesion::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereBetween('fecha_apertura', [$fechaInicio, $fechaFin])
+            ->whereBetween('apertura_at', [$fechaInicio, $fechaFin])
             ->get();
 
-        $totalIngresos = $sesiones->sum('monto_cierre');
+        $totalIngresos = $sesiones->sum('monto_declarado_cierre');
         $promedioSesion = $sesiones->count() > 0 ? $totalIngresos / $sesiones->count() : 0;
 
         return [
@@ -237,7 +237,7 @@ class AnalyticsService
             'promedio_sesion' => $promedioSesion,
             'sesiones_abiertas' => CajaSesion::where('empresa_id', $empresaId)
                 ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-                ->whereNull('fecha_cierre')
+                ->whereNull('cierre_at')
                 ->count()
         ];
     }
@@ -248,7 +248,7 @@ class AnalyticsService
     private function obtenerMetricasCompras(int $empresaId, $fechaInicio, $fechaFin, ?int $sucursalId): array
     {
         $compras = Compra::where('empresa_id', $empresaId)
-            ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
+            ->when($sucursalId, fn($q) => $q->where('sucursal_destino_id', $sucursalId))
             ->whereBetween('fecha', [$fechaInicio, $fechaFin])
             ->get();
 
@@ -257,7 +257,7 @@ class AnalyticsService
             'monto_total_compras' => $compras->sum('total'),
             'promedio_compra' => $compras->count() > 0 ? $compras->sum('total') / $compras->count() : 0,
             'compras_pendientes' => Compra::where('empresa_id', $empresaId)
-                ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
+                ->when($sucursalId, fn($q) => $q->where('sucursal_destino_id', $sucursalId))
                 ->where('estado', 'PENDIENTE')
                 ->count()
         ];
@@ -271,13 +271,11 @@ class AnalyticsService
         $lotesProximosVencer = Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->where('fecha_vencimiento', '<=', Carbon::now()->addDays(30))
-            ->where('cantidad_disponible', '>', 0)
             ->count();
 
         $lotesVencidos = Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->where('fecha_vencimiento', '<', Carbon::now())
-            ->where('cantidad_disponible', '>', 0)
             ->count();
 
         return [
@@ -285,7 +283,7 @@ class AnalyticsService
             'lotes_vencidos' => $lotesVencidos,
             'total_lotes_activos' => Lote::where('empresa_id', $empresaId)
                 ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-                ->where('cantidad_disponible', '>', 0)
+                ->where('estado_lote', 'activo')
                 ->count()
         ];
     }
@@ -301,12 +299,12 @@ class AnalyticsService
 
         $ventasActuales = Venta::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
             ->sum('total');
 
         $ventasAnteriores = Venta::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereBetween('fecha', [$fechaInicioAnterior, $fechaFinAnterior])
+            ->whereBetween('fecha_venta', [$fechaInicioAnterior, $fechaFinAnterior])
             ->sum('total');
 
         $crecimiento = $ventasAnteriores > 0 
@@ -330,14 +328,14 @@ class AnalyticsService
             ->join('productos as p', 'vd.producto_id', '=', 'p.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
-            ->sum(DB::raw('vd.cantidad * p.costo_unitario'));
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
+            ->sum(DB::raw('vd.cantidad * p.precio_costo'));
 
         $inventarioPromedio = DB::table('producto_stocks as ps')
             ->join('productos as p', 'ps.producto_id', '=', 'p.id')
             ->where('p.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('ps.sucursal_id', $sucursalId))
-            ->avg(DB::raw('ps.stock_actual * p.costo_unitario'));
+            ->avg(DB::raw('ps.cantidad_actual * p.precio_costo'));
 
         return $inventarioPromedio > 0 ? $costoVentas / $inventarioPromedio : 0;
     }
@@ -350,7 +348,6 @@ class AnalyticsService
         return Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->where('fecha_vencimiento', '<', Carbon::now())
-            ->where('cantidad_disponible', '>', 0)
             ->count();
     }
 
@@ -362,7 +359,7 @@ class AnalyticsService
         return ProductoStock::join('productos', 'producto_stocks.producto_id', '=', 'productos.id')
             ->where('productos.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('producto_stocks.sucursal_id', $sucursalId))
-            ->whereRaw('producto_stocks.stock_actual <= productos.stock_minimo')
+            ->whereRaw('producto_stocks.cantidad_actual <= productos.stock_minimo')
             ->count();
     }
 
@@ -389,7 +386,7 @@ class AnalyticsService
             $query->where('sucursal_id', $filtros['sucursal_id']);
         }
 
-        $eventos = $query->with(['user', 'sucursal'])
+        $eventos = $query->with(['sucursal'])
             ->orderBy('created_at', 'desc')
             ->paginate(50);
 
@@ -401,7 +398,6 @@ class AnalyticsService
                 ->groupBy('evento_tipo')
                 ->pluck('total', 'evento_tipo'),
             'eventos_por_usuario' => AnalyticsEvento::where('empresa_id', $empresaId)
-                ->with('user')
                 ->selectRaw('user_id, COUNT(*) as total')
                 ->groupBy('user_id')
                 ->orderByDesc('total')

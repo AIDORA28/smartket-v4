@@ -57,9 +57,6 @@
     <!-- Livewire Scripts -->
     @livewireScripts
 
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
     <!-- Custom Scripts -->
     <script>
         // Auto-close sidebar on mobile after navigation

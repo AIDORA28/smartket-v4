@@ -16,7 +16,7 @@
             </p>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('productos.edit', $producto) }}" 
+            <a href="{{ route('productos.editar', $producto) }}" 
                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 <span class="mr-2">✏️</span>
                 Editar

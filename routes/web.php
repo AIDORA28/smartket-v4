@@ -30,12 +30,8 @@ Route::get('productos/{producto}/editar', \App\Livewire\Productos\Formulario::cl
     Route::resource('categorias', CategoriaController::class)->except(['show']);
     
     Route::prefix('inventario')->name('inventario.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Inventario', 'description' => 'Control de stock por sucursal']);
-        })->name('index');
-        Route::get('/movimientos', function () {
-            return view('placeholder', ['module' => 'Movimientos de Inventario']);
-        })->name('movimientos');
+        Route::get('/', \App\Livewire\Inventario\Dashboard::class)->name('index');
+        Route::get('/movimientos', \App\Livewire\Inventario\Movimientos::class)->name('movimientos');
         Route::get('/transferencias', function () {
             return view('placeholder', ['module' => 'Transferencias entre Sucursales']);
         })->name('transferencias');
@@ -43,9 +39,7 @@ Route::get('productos/{producto}/editar', \App\Livewire\Productos\Formulario::cl
     
     // Módulo de Ventas y POS
     Route::prefix('pos')->name('pos.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Punto de Venta', 'description' => 'Sistema POS táctil']);
-        })->name('index');
+        Route::get('/', \App\Livewire\Pos\Index::class)->name('index');
     });
     
     Route::prefix('ventas')->name('ventas.')->group(function () {
@@ -58,12 +52,9 @@ Route::get('productos/{producto}/editar', \App\Livewire\Productos\Formulario::cl
     });
     
     Route::prefix('clientes')->name('clientes.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Gestión de Clientes']);
-        })->name('index');
-        Route::get('/create', function () {
-            return view('placeholder', ['module' => 'Nuevo Cliente']);
-        })->name('create');
+        Route::get('/', \App\Livewire\Clientes\Lista::class)->name('index');
+        Route::get('/crear', \App\Livewire\Clientes\Formulario::class)->name('crear');
+        Route::get('/{cliente}', \App\Livewire\Clientes\Detalle::class)->name('show');
     });
     
     // Módulo de Caja
@@ -113,18 +104,23 @@ Route::get('productos/{producto}/editar', \App\Livewire\Productos\Formulario::cl
     
     // Módulo de Reportes y Analytics
     Route::prefix('reportes')->name('reportes.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Generador de Reportes', 'description' => 'Reportes dinámicos con exportación PDF/Excel']);
-        })->name('index');
-        Route::get('/dashboard', function () {
-            return view('placeholder', ['module' => 'Analytics Dashboard', 'description' => 'KPIs y métricas de negocio']);
-        })->name('dashboard');
-        Route::get('/ventas', function () {
-            return view('placeholder', ['module' => 'Reportes de Ventas']);
-        })->name('ventas');
+        Route::get('/', \App\Livewire\Reportes\Index::class)->name('index');
+        Route::get('/ventas', \App\Livewire\Reportes\Sales::class)->name('ventas');
         Route::get('/inventario', function () {
             return view('placeholder', ['module' => 'Reportes de Inventario']);
         })->name('inventario');
+        Route::get('/clientes', function () {
+            return view('placeholder', ['module' => 'Reportes de Clientes']);
+        })->name('clientes');
+        Route::get('/productos', function () {
+            return view('placeholder', ['module' => 'Análisis de Productos']);
+        })->name('productos');
+        Route::get('/analytics', function () {
+            return view('placeholder', ['module' => 'Analytics y Eventos']);
+        })->name('analytics');
+        Route::get('/dashboard-ejecutivo', function () {
+            return view('placeholder', ['module' => 'Dashboard Ejecutivo']);
+        })->name('dashboard.ejecutivo');
     });
     
     // Módulo de Administración (Solo admins)

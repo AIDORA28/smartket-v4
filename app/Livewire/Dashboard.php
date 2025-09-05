@@ -44,10 +44,49 @@ class Dashboard extends Component
     // Filtros
     public $fechaInicio;
     public $fechaFin;
+    public $dateRange = ['start' => null, 'end' => null];
     public $loading = false;
 
     protected $tenantService;
     protected $dashboardService;
+
+    /**
+     * Obtener color para KPI según su tipo
+     */
+    public function getKpiColor($key)
+    {
+        $colors = [
+            'ventas_hoy' => 'green',
+            'ventas_mes' => 'blue',
+            'productos_vendidos' => 'purple',
+            'clientes_nuevos' => 'indigo',
+            'stock_bajo' => 'red',
+            'lotes_vencer' => 'yellow',
+            'caja_actual' => 'green',
+            'promedio_venta' => 'blue'
+        ];
+        
+        return $colors[$key] ?? 'blue';
+    }
+    
+    /**
+     * Obtener URL para KPI según su tipo
+     */
+    public function getKpiUrl($key)
+    {
+        $urls = [
+            'ventas_hoy' => route('ventas.index'),
+            'ventas_mes' => route('ventas.index'),
+            'productos_vendidos' => route('productos.index'),
+            'clientes_nuevos' => route('clientes.index'),
+            'stock_bajo' => route('productos.index') . '?filter=stock_bajo',
+            'lotes_vencer' => route('lotes.index'),
+            'caja_actual' => route('caja.index'),
+            'promedio_venta' => route('reportes.index')
+        ];
+        
+        return $urls[$key] ?? null;
+    }
 
     public function mount()
     {
@@ -347,6 +386,7 @@ class Dashboard extends Component
             ->where('ventas.empresa_id', $empresaId)
             ->whereBetween('ventas.fecha_venta', [Carbon::now()->startOfMonth(), Carbon::now()])
             ->select(
+                'productos.id',
                 'productos.nombre',
                 DB::raw('SUM(venta_detalles.cantidad) as cantidad_vendida'),
                 DB::raw('SUM(venta_detalles.total) as total_vendido')

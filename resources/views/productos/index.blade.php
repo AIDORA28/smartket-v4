@@ -207,7 +207,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                 <a href="{{ route('productos.show', $producto) }}" 
                                    class="text-blue-600 hover:text-blue-900">Ver</a>
-                                <a href="{{ route('productos.edit', $producto) }}" 
+                                <a href="{{ route('productos.editar', $producto) }}" 
                                    class="text-indigo-600 hover:text-indigo-900">Editar</a>
                             </td>
                         </tr>

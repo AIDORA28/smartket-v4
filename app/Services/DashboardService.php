@@ -54,7 +54,7 @@ class DashboardService
 
         // Ventas del período
         $ventasQuery = Venta::where('empresa_id', $empresaId)
-            ->whereBetween('fecha', [$fechaInicio, $fechaFin]);
+            ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
         
         if ($sucursalId) {
             $ventasQuery->where('sucursal_id', $sucursalId);
@@ -71,7 +71,7 @@ class DashboardService
 
         $ventasAnteriores = Venta::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereBetween('fecha', [$fechaInicioAnterior, $fechaFinAnterior])
+            ->whereBetween('fecha_venta', [$fechaInicioAnterior, $fechaFinAnterior])
             ->sum('total');
 
         $crecimientoVentas = $ventasAnteriores > 0 
@@ -83,7 +83,7 @@ class DashboardService
             ->join('ventas as v', 'vd.venta_id', '=', 'v.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
             ->sum('vd.cantidad');
 
         // Nuevos clientes
@@ -158,7 +158,7 @@ class DashboardService
         $stockBajo = ProductoStock::join('productos', 'producto_stocks.producto_id', '=', 'productos.id')
             ->where('productos.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('producto_stocks.sucursal_id', $sucursalId))
-            ->whereRaw('producto_stocks.stock_actual <= productos.stock_minimo')
+            ->whereRaw('producto_stocks.cantidad_actual <= productos.stock_minimo')
             ->with('producto')
             ->get();
 
@@ -175,7 +175,6 @@ class DashboardService
         $lotesVencidos = Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->where('fecha_vencimiento', '<', Carbon::now())
-            ->where('cantidad_disponible', '>', 0)
             ->with('producto')
             ->get();
 
@@ -192,7 +191,6 @@ class DashboardService
         $proximosVencer = Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->whereBetween('fecha_vencimiento', [Carbon::now(), Carbon::now()->addDays(7)])
-            ->where('cantidad_disponible', '>', 0)
             ->with('producto')
             ->get();
 
@@ -208,9 +206,9 @@ class DashboardService
         // Sesiones de caja abiertas por mucho tiempo
         $sesionesLargas = CajaSesion::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereNull('fecha_cierre')
-            ->where('fecha_apertura', '<', Carbon::now()->subHours(12))
-            ->with(['user', 'sucursal'])
+            ->whereNull('cierre_at')
+            ->where('apertura_at', '<', Carbon::now()->subHours(12))
+            ->with(['sucursal'])
             ->get();
 
         if ($sesionesLargas->count() > 0) {
@@ -234,19 +232,18 @@ class DashboardService
 
         return [
             'ventas_recientes' => Venta::where('empresa_id', $empresaId)
-                ->with(['cliente', 'user', 'sucursal'])
+                ->with(['cliente', 'sucursal'])
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get(),
             
             'movimientos_inventario' => InventarioMovimiento::where('empresa_id', $empresaId)
-                ->with(['producto', 'user'])
+                ->with(['producto'])
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get(),
 
             'eventos_analytics' => AnalyticsEvento::where('empresa_id', $empresaId)
-                ->with(['user'])
                 ->orderBy('created_at', 'desc')
                 ->limit($limite)
                 ->get()
@@ -287,7 +284,7 @@ class DashboardService
             ->join('productos as p', 'ps.producto_id', '=', 'p.id')
             ->where('p.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('ps.sucursal_id', $sucursalId))
-            ->sum(DB::raw('ps.stock_actual * p.costo_unitario'));
+            ->sum(DB::raw('ps.cantidad_actual * p.precio_costo'));
     }
 
     private function contarProductosStockBajo(int $empresaId, ?int $sucursalId): int
@@ -295,7 +292,7 @@ class DashboardService
         return ProductoStock::join('productos', 'producto_stocks.producto_id', '=', 'productos.id')
             ->where('productos.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('producto_stocks.sucursal_id', $sucursalId))
-            ->whereRaw('producto_stocks.stock_actual <= productos.stock_minimo')
+            ->whereRaw('producto_stocks.cantidad_actual <= productos.stock_minimo')
             ->count();
     }
 
@@ -304,7 +301,7 @@ class DashboardService
         return ProductoStock::join('productos', 'producto_stocks.producto_id', '=', 'productos.id')
             ->where('productos.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('producto_stocks.sucursal_id', $sucursalId))
-            ->where('producto_stocks.stock_actual', 0)
+            ->where('producto_stocks.cantidad_actual', 0)
             ->count();
     }
 
@@ -312,7 +309,7 @@ class DashboardService
     {
         return CajaSesion::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereNull('fecha_cierre')
+            ->whereNull('cierre_at')
             ->count();
     }
 
@@ -320,7 +317,7 @@ class DashboardService
     {
         return CajaSesion::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereNull('fecha_cierre')
+            ->whereNull('cierre_at')
             ->sum('monto_inicial');
     }
 
@@ -329,7 +326,6 @@ class DashboardService
         return Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->whereBetween('fecha_vencimiento', [Carbon::now(), Carbon::now()->addDays(30)])
-            ->where('cantidad_disponible', '>', 0)
             ->count();
     }
 
@@ -338,14 +334,13 @@ class DashboardService
         return Lote::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
             ->where('fecha_vencimiento', '<', Carbon::now())
-            ->where('cantidad_disponible', '>', 0)
             ->count();
     }
 
     private function contarComprasPendientes(int $empresaId, ?int $sucursalId): int
     {
         return Compra::where('empresa_id', $empresaId)
-            ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
+            ->when($sucursalId, fn($q) => $q->where('sucursal_destino_id', $sucursalId))
             ->where('estado', 'PENDIENTE')
             ->count();
     }
@@ -354,8 +349,8 @@ class DashboardService
     {
         return Venta::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereBetween('fecha', [$fechaInicio, $fechaFin])
-            ->selectRaw('DATE(fecha) as fecha, COUNT(*) as cantidad, SUM(total) as monto')
+            ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
+            ->selectRaw('DATE(fecha_venta) as fecha, COUNT(*) as cantidad, SUM(total) as monto')
             ->groupBy('fecha')
             ->orderBy('fecha')
             ->get()
@@ -369,7 +364,7 @@ class DashboardService
             ->join('productos as p', 'vd.producto_id', '=', 'p.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
             ->selectRaw('p.nombre, SUM(vd.cantidad) as cantidad_vendida')
             ->groupBy('p.id', 'p.nombre')
             ->orderByDesc('cantidad_vendida')
@@ -386,7 +381,7 @@ class DashboardService
             ->join('categorias as c', 'p.categoria_id', '=', 'c.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
             ->selectRaw('c.nombre as categoria, SUM(vd.subtotal) as total_ventas')
             ->groupBy('c.id', 'c.nombre')
             ->orderByDesc('total_ventas')
@@ -409,7 +404,7 @@ class DashboardService
     {
         return Cliente::where('empresa_id', $empresaId)
             ->withCount(['ventas' => function($q) use ($fechaInicio, $fechaFin, $sucursalId) {
-                $q->whereBetween('fecha', [$fechaInicio, $fechaFin]);
+                $q->whereBetween('fecha_venta', [$fechaInicio, $fechaFin]);
                 if ($sucursalId) {
                     $q->where('sucursal_id', $sucursalId);
                 }
@@ -427,10 +422,10 @@ class DashboardService
             ->join('productos as p', 'vd.producto_id', '=', 'p.id')
             ->where('v.empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('v.sucursal_id', $sucursalId))
-            ->whereBetween('v.fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('v.fecha_venta', [$fechaInicio, $fechaFin])
             ->selectRaw('
                 SUM(vd.subtotal) as ingresos_totales,
-                SUM(vd.cantidad * p.costo_unitario) as costos_totales
+                SUM(vd.cantidad * p.precio_costo) as costos_totales
             ')
             ->first();
 
@@ -479,7 +474,7 @@ class DashboardService
     {
         $totalVentas = Venta::where('empresa_id', $empresaId)
             ->when($sucursalId, fn($q) => $q->where('sucursal_id', $sucursalId))
-            ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+            ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
             ->sum('total');
 
         $diasPeriodo = Carbon::parse($fechaInicio)->diffInDays($fechaFin) + 1;

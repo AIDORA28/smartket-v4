@@ -55,7 +55,7 @@ class ReporteVentasService
                 return [
                     'id' => $venta->id,
                     'numero_venta' => $venta->numero_venta,
-                    'fecha' => $venta->fecha_venta->format('Y-m-d H:i:s'),
+                    'fecha_venta' => $venta->fecha_venta->format('Y-m-d H:i:s'),
                     'cliente' => $venta->cliente?->nombre ?? 'Cliente general',
                     'total' => $venta->total,
                     'pagado' => $venta->total_pagado,
@@ -280,7 +280,7 @@ class ReporteVentasService
         }
 
         return [
-            'fecha' => $fecha,
+            'fecha_venta' => $fecha,
             'resumen' => [
                 'total_ventas' => $ventas->count(),
                 'monto_total' => $ventas->sum('total'),

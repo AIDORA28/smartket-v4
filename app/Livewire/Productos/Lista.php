@@ -89,7 +89,7 @@ class Lista extends Component
     {
         $tenantService = app(TenantService::class);
         return Categoria::where('empresa_id', $tenantService->getEmpresaId())
-                       ->where('activo', true)
+                       ->where('activa', true)
                        ->orderBy('nombre')
                        ->get();
     }

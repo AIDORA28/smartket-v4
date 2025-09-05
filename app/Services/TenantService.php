@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Empresa;
 use App\Models\Sucursal;
+use Illuminate\Support\Facades\Auth;
 
 class TenantService
 {
@@ -21,7 +22,50 @@ class TenantService
 
     public function getEmpresa(): ?Empresa
     {
+        // Si no hay empresa actual, intentar obtener una automáticamente
+        if (!$this->currentEmpresa) {
+            $this->initializeEmpresa();
+        }
+        
         return $this->currentEmpresa;
+    }
+    
+    /**
+     * Inicializar empresa automáticamente
+     */
+    private function initializeEmpresa(): void
+    {
+        // Intento 1: Empresa en sesión
+        if (session('empresa_id')) {
+            try {
+                $this->currentEmpresa = Empresa::findOrFail(session('empresa_id'));
+                return;
+            } catch (\Exception $e) {
+                // Continuar con otros métodos
+            }
+        }
+        
+        // Intento 2: Usuario autenticado con empresas
+        if (Auth::check()) {
+            $user = Auth::user();
+            // Verificar si el usuario tiene relación con empresas
+            if (method_exists($user, 'empresa_id') && $user->empresa_id) {
+                try {
+                    $this->currentEmpresa = Empresa::findOrFail($user->empresa_id);
+                    return;
+                } catch (\Exception $e) {
+                    // Continuar con otros métodos
+                }
+            }
+        }
+        
+        // Intento 3: Primera empresa disponible (fallback)
+        $this->currentEmpresa = Empresa::first();
+        
+        // Guardar en sesión para futuras solicitudes
+        if ($this->currentEmpresa) {
+            session(['empresa_id' => $this->currentEmpresa->id]);
+        }
     }
 
     public function getEmpresaId(): ?int

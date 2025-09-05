@@ -21,7 +21,6 @@ class Formulario extends Component
     #[Validate('required|string|max:255')]
     public $nombre = '';
 
-    #[Validate('required|string|max:50|unique:productos,codigo')]
     public $codigo = '';
 
     #[Validate('nullable|string|max:255')]
@@ -149,7 +148,7 @@ class Formulario extends Component
     {
         $tenantService = app(TenantService::class);
         return Categoria::where('empresa_id', $tenantService->getEmpresaId())
-                       ->where('activo', true)
+                       ->where('activa', true)
                        ->orderBy('nombre')
                        ->get();
     }

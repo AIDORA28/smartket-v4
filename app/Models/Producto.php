@@ -84,6 +84,11 @@ class Producto extends Model
         return $this->stocks()->sum('cantidad_actual');
     }
 
+    public function getStockTotalAttribute(): float
+    {
+        return $this->getStockTotal();
+    }
+
     public function getStockSucursal(int $sucursalId): float
     {
         return $this->stocks()->where('sucursal_id', $sucursalId)->value('cantidad_actual') ?? 0;
