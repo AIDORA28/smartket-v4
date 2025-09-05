@@ -47,9 +47,10 @@ docs/
 ├── DEPLOYMENT_GUIDE.md         ← Guía de deployment
 ├── TESTING_STRATEGY.md         ← Estrategia de testing
 ├── SECURITY_COMPLIANCE.md     ← Seguridad y compliance
-├── ROADMAP.md                  ← Roadmap de desarrollo
-├── MIGRATION_FIXES.md          ← Correcciones de migraciones
-└── DICCIONARIO_NEGOCIO.md     ← Términos y roles del negocio
+├── DASHBOARD_COMPLETADO.md       ← 🎯 DASHBOARD EJECUTIVO COMPLETADO
+├── DESARROLLO_ORDEN.md           ← Roadmap de desarrollo
+├── MIGRATION_FIXES.md            ← Correcciones de migraciones
+└── DICCIONARIO_NEGOCIO.md       ← Términos y roles del negocio
 ```
 
 ---
@@ -67,8 +68,9 @@ docs/
 - **[API_REFERENCE.md](./API_REFERENCE.md)** - Endpoints y documentación API
 
 ### **🎯 Gestión de Proyecto**
+- **[DASHBOARD_COMPLETADO.md](./DASHBOARD_COMPLETADO.md)** - Dashboard ejecutivo 100% funcional
+- **[DESARROLLO_ORDEN.md](./DESARROLLO_ORDEN.md)** - Estado actual del proyecto y roadmap
 - **[FEATURE_FLAGS.md](./FEATURE_FLAGS.md)** - Features por plan y rubro
-- **[ROADMAP.md](./ROADMAP.md)** - Fases de implementación
 - **[MIGRATION_FIXES.md](./MIGRATION_FIXES.md)** - Correcciones de migraciones
 
 ### **🚀 Operaciones**
@@ -128,16 +130,19 @@ docs/
 - [x] Creación de la carpeta `/docs`
 - [x] Migración de `MASTER_SPEC.md` (actualizado con Laravel+Livewire)
 - [x] Metodología de documentación establecida
+- [x] Dashboard Ejecutivo completamente implementado y funcional
+- [x] Documentación específica del dashboard creada (DASHBOARD_COMPLETADO.md)
+- [x] API_SPEC.md actualizado con funcionalidades del dashboard
 
 ### **🔄 En Progreso:**
 - [ ] Migración de todos los archivos `.md` desde la raíz
 - [ ] Creación de documentos específicos (DATABASE_SCHEMA, ARQUITECTURA, etc.)
-- [ ] Verificación de consistencia entre documentación y código
+- [x] Verificación de consistencia entre documentación y código (Dashboard completado)
 
 ### **❌ Pendiente:**
 - [ ] Corrección de migraciones según esquema documentado
-- [ ] Implementación de features documentadas
-- [ ] Testing de la documentación vs implementación real
+- [x] Implementación de features documentadas (Dashboard ejecutivo completado)
+- [x] Testing de la documentación vs implementación real (Dashboard verificado)
 
 ---
 
