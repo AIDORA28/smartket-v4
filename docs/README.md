@@ -1,162 +1,128 @@
-# 📚 SmartKet ERP - Documentación Técnica
+# 📚 DOCUMENTACIÓN SMARTKET V4
 
-**Fecha:** 30 Agosto 2025  
-**Estado:** 🔄 EN MIGRACIÓN A NUEVA METODOLOGÍA  
-**Versión:** 1.0 Inicial  
+## 🎯 **DOCUMENTOS PRINCIPALES (Resúmenes Ejecutivos)**
+
+### �️ [ARQUITECTURA COMPLETA](RESUMEN_ARQUITECTURA.md)
+**Visión general del sistema ERP SaaS multi-tenant**
+- Stack tecnológico (Laravel 12 + PHP 8.3 + PostgreSQL)
+- Arquitectura multi-tenant con Row Level Security
+- Módulos funcionales (POS, Productos, Inventario, CRM)
+- Performance benchmarks y escalabilidad
+- Modelo de negocio SaaS y pricing
+
+### � [ESPECIFICACIONES TÉCNICAS](RESUMEN_ESPECIFICACIONES.md)
+**Detalles técnicos completos para desarrollo**
+- Backend: Laravel + Livewire + API REST
+- Frontend: TailwindCSS + Alpine.js + Fast Navigation
+- Base de datos: PostgreSQL con optimizaciones
+- Seguridad: Authentication, Authorization, Encryption
+- Deployment: Supabase + Performance metrics
+
+### �️ [ESQUEMA DE BASE DE DATOS](RESUMEN_DATABASE.md)
+**Diseño completo de la base de datos**
+- Esquema multi-tenant con RLS
+- Tablas optimizadas: empresas, productos, ventas, inventario
+- Índices de performance y consultas optimizadas
+- Triggers automáticos y vistas materializadas
+- Estrategias de backup y recovery
+
+### 🚀 [MIGRACIÓN INERTIA.JS](RESUMEN_MIGRACION_INERTIA.md)
+**Plan completo de migración a React + Inertia.js**
+- Estrategia de migración gradual por módulos
+- Configuración técnica (Vite + TypeScript)
+- Componentes React reutilizables
+- Estado global y custom hooks
+- PWA y optimizaciones de performance
+
+### ☁️ [CONFIGURACIÓN SUPABASE](SUPABASE_SETUP.md)
+**Setup completo con credenciales reales**
+- Proyecto configurado: mklfolbageroutbquwqx.supabase.co
+- Credenciales de conexión PostgreSQL
+- Row Level Security para multi-tenancy
+- Storage para imágenes de productos
+- Pricing y escalabilidad empresarial
 
 ---
 
-## 📋 **METODOLOGÍA DE DOCUMENTACIÓN**
+## � **DOCUMENTOS DE REFERENCIA**
 
-### 🎯 **REGLAS DE DOCUMENTACIÓN (NO NEGOCIABLES)**
+### � [API SPECIFICATION](API_SPEC.md)
+Documentación completa de endpoints REST API
 
-1. **📁 ORGANIZACIÓN:**
-   - TODA documentación debe estar en `/docs`
-   - NO más archivos `.md` sueltos en la raíz
-   - Cada archivo tiene un propósito específico y claro
+### 🎨 [FRONTEND SPECIFICATION](FRONTEND_SPEC.md)  
+Guía de componentes UI/UX y estándares de diseño
 
-2. **🔄 CONSISTENCY FIRST:**
-   - Cualquier cambio de arquitectura SE DOCUMENTA PRIMERO
-   - Base de datos y documentación deben estar 100% alineadas
-   - NO se cambia nada sin actualizar la documentación correspondiente
+### ⚙️ [BACKEND SPECIFICATION](BACKEND_SPEC.md)
+Arquitectura detallada del backend Laravel
 
-3. **📖 SINGLE SOURCE OF TRUTH:**
-   - `MASTER_SPEC.md` = Especificación completa del proyecto
-   - `DATABASE_SCHEMA.md` = Esquema de base de datos actualizado
-   - `ARQUITECTURA.md` = Decisiones arquitectónicas finales
+### 🏢 [ARQUITECTURA PANADERÍA](ARQUITECTURA_PANADERIA.md)
+Especificaciones específicas para el sector gastronómico
 
-4. **🚫 PROHIBICIONES:**
-   - NO cambiar stack tecnológico sin documentar razones
-   - NO crear migraciones sin verificar contra el esquema documentado
-   - NO implementar features sin definir en la documentación
+### 📊 [DISEÑO POS MEJORADO](DISEÑO_POS_MEJORADO.md)
+Interface optimizada para punto de venta
+
+### 🚩 [FEATURE FLAGS](FEATURE_FLAGS.md)
+Sistema de flags para features en desarrollo
+
+### 📈 [OPTIMIZACIONES RENDIMIENTO](OPTIMIZACIONES_RENDIMIENTO.md)
+Técnicas de optimización implementadas
+
+### � [MIGRACIÓN INERTIA](MIGRACION_INERTIA.md)
+Detalles técnicos de la migración frontend
+
+### � [ESPECIFICACIÓN MASTER](MASTER_SPEC.md)
+Documento maestro con todas las especificaciones
 
 ---
 
-## 📁 **ESTRUCTURA DE DOCUMENTACIÓN**
+## 🎯 **ESTADO ACTUAL DEL PROYECTO**
 
+### ✅ **COMPLETADO:**
+- ✅ Core ERP funcional (Productos, POS, Inventario, Clientes)
+- ✅ Multi-tenancy con seguridad empresarial
+- ✅ Optimizaciones de performance y fast navigation
+- ✅ Integración completa con Supabase
+- ✅ Documentación técnica completa
+
+### 🔄 **EN PROGRESO:**
+- � Migración gradual a React + Inertia.js
+- 🔄 PWA para experiencia móvil mejorada
+- 🔄 API REST pública para integraciones
+
+### � **PRÓXIMOS PASOS:**
+- 📱 App móvil nativa (React Native)
+- 💳 Integración con pasarelas de pago peruanas
+- 🧾 Facturación electrónica SUNAT
+- 🤖 Analytics predictivos con IA
+
+---
+
+## � **PARA DESARROLLADORES**
+
+### 🚀 **Quick Start:**
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/AIDORA28/smartket-v4
+
+# 2. Instalar dependencias
+composer install && npm install
+
+# 3. Configurar .env con credenciales Supabase
+cp .env.example .env
+
+# 4. Migrar base de datos
+php artisan migrate:fresh --seed
+
+# 5. Iniciar desarrollo
+php artisan serve & npm run dev
 ```
-docs/
-├── README.md                    ← Este archivo (índice general)
-├── MASTER_SPEC.md              ← 🎯 FUENTE ÚNICA DE VERDAD
-├── ARQUITECTURA.md             ← Decisiones arquitectónicas
-├── DATABASE_SCHEMA.md          ← Esquema base de datos
-├── BACKEND_SPEC.md             ← Especificación backend
-├── FRONTEND_SPEC.md            ← Especificación frontend
-├── API_REFERENCE.md            ← Documentación API endpoints
-├── FEATURE_FLAGS.md            ← Gestión de features por plan
-├── DEPLOYMENT_GUIDE.md         ← Guía de deployment
-├── TESTING_STRATEGY.md         ← Estrategia de testing
-├── SECURITY_COMPLIANCE.md     ← Seguridad y compliance
-├── DASHBOARD_COMPLETADO.md       ← 🎯 DASHBOARD EJECUTIVO COMPLETADO
-├── DESARROLLO_ORDEN.md           ← Roadmap de desarrollo
-├── MIGRATION_FIXES.md            ← Correcciones de migraciones
-└── DICCIONARIO_NEGOCIO.md       ← Términos y roles del negocio
-```
+
+### 📚 **Orden de Lectura Recomendado:**
+1. **RESUMEN_ARQUITECTURA.md** - Entender el sistema completo
+2. **SUPABASE_SETUP.md** - Configurar base de datos
+3. **RESUMEN_ESPECIFICACIONES.md** - Detalles técnicos
+4. **RESUMEN_MIGRACION_INERTIA.md** - Plan de modernización
 
 ---
 
-## 🔍 **ÍNDICE DE DOCUMENTACIÓN**
-
-### **📖 Documentos Principales**
-- **[MASTER_SPEC.md](./MASTER_SPEC.md)** - Especificación maestra completa del proyecto
-- **[ARQUITECTURA.md](./ARQUITECTURA.md)** - Stack tecnológico y decisiones arquitectónicas
-- **[DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md)** - Esquema completo de base de datos
-
-### **🛠️ Documentos Técnicos**
-- **[BACKEND_SPEC.md](./BACKEND_SPEC.md)** - Laravel controllers, services, models
-- **[FRONTEND_SPEC.md](./FRONTEND_SPEC.md)** - Livewire components y blade views
-- **[API_REFERENCE.md](./API_REFERENCE.md)** - Endpoints y documentación API
-
-### **🎯 Gestión de Proyecto**
-- **[DASHBOARD_COMPLETADO.md](./DASHBOARD_COMPLETADO.md)** - Dashboard ejecutivo 100% funcional
-- **[DESARROLLO_ORDEN.md](./DESARROLLO_ORDEN.md)** - Estado actual del proyecto y roadmap
-- **[FEATURE_FLAGS.md](./FEATURE_FLAGS.md)** - Features por plan y rubro
-- **[MIGRATION_FIXES.md](./MIGRATION_FIXES.md)** - Correcciones de migraciones
-
-### **🚀 Operaciones**
-- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Guía de despliegue
-- **[TESTING_STRATEGY.md](./TESTING_STRATEGY.md)** - Estrategia de pruebas
-- **[SECURITY_COMPLIANCE.md](./SECURITY_COMPLIANCE.md)** - Seguridad y compliance
-
-### **📝 Negocio**
-- **[DICCIONARIO_NEGOCIO.md](./DICCIONARIO_NEGOCIO.md)** - Roles, términos y conceptos
-
----
-
-## 🎯 **WORKFLOW DE DOCUMENTACIÓN**
-
-### **📝 Para Cambios de Arquitectura:**
-1. Actualizar `ARQUITECTURA.md` PRIMERO
-2. Justificar el cambio con razones técnicas
-3. Actualizar `MASTER_SPEC.md` si afecta la especificación general
-4. Implementar los cambios en código
-5. Verificar que todo esté alineado
-
-### **🗄️ Para Cambios de Base de Datos:**
-1. Actualizar `DATABASE_SCHEMA.md` PRIMERO
-2. Crear las migraciones siguiendo el esquema documentado
-3. Verificar que no hay conflicts con el estado actual
-4. Ejecutar las migraciones
-5. Validar que la implementación coincide con la documentación
-
-### **🔧 Para Nuevas Features:**
-1. Documentar en `FEATURE_FLAGS.md` si requiere feature flag
-2. Actualizar `BACKEND_SPEC.md` o `FRONTEND_SPEC.md` según corresponda
-3. Actualizar `API_REFERENCE.md` si hay nuevos endpoints
-4. Implementar la feature
-5. Actualizar `ROADMAP.md` con el progreso
-
----
-
-## 🚨 **ALERTAS DE CONSISTENCIA**
-
-### **❌ NUNCA MÁS HACER:**
-- Cambiar el stack tecnológico por quinta vez
-- Crear migraciones que no coincidan con la documentación
-- Implementar features sin documentar primero
-- Tener archivos `.md` dispersos en la raíz del proyecto
-
-### **✅ SIEMPRE HACER:**
-- Verificar que la documentación esté actualizada antes de cualquier cambio
-- Usar `MASTER_SPEC.md` como referencia única
-- Mantener alineados documentación y código
-- Documentar decisiones y razones
-
----
-
-## 📊 **ESTADO ACTUAL**
-
-### **✅ Completado:**
-- [x] Creación de la carpeta `/docs`
-- [x] Migración de `MASTER_SPEC.md` (actualizado con Laravel+Livewire)
-- [x] Metodología de documentación establecida
-- [x] Dashboard Ejecutivo completamente implementado y funcional
-- [x] Documentación específica del dashboard creada (DASHBOARD_COMPLETADO.md)
-- [x] API_SPEC.md actualizado con funcionalidades del dashboard
-
-### **🔄 En Progreso:**
-- [ ] Migración de todos los archivos `.md` desde la raíz
-- [ ] Creación de documentos específicos (DATABASE_SCHEMA, ARQUITECTURA, etc.)
-- [x] Verificación de consistencia entre documentación y código (Dashboard completado)
-
-### **❌ Pendiente:**
-- [ ] Corrección de migraciones según esquema documentado
-- [x] Implementación de features documentadas (Dashboard ejecutivo completado)
-- [x] Testing de la documentación vs implementación real (Dashboard verificado)
-
----
-
-## 🔗 **LINKS RÁPIDOS**
-
-- **Repositorio:** https://github.com/AIDORA28/SmartKet-V2
-- **Issue Tracker:** (Pendiente)
-- **Demo:** (Pendiente)
-- **Documentación API:** (Pendiente - se generará desde API_REFERENCE.md)
-
----
-
-**🎯 ESTE DIRECTORIO ES LA NUEVA FUENTE ÚNICA DE VERDAD PARA TODA LA DOCUMENTACIÓN**
-
-*Creado: 30 Agosto 2025*  
-*Metodología: Documentation-Driven Development*  
-*Estado: 🔄 EN MIGRACIÓN ACTIVA*
+**SmartKet v4** - ERP SaaS empresarial para panaderías y restaurantes en Latinoamérica.
