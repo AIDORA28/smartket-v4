@@ -8,46 +8,27 @@ use App\Services\TenantService;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\Validate;
 
-class Formulario extends Component
+class FormularioFixed extends Component
 {
     use WithFileUploads;
 
-    public ?Producto $producto = null;
+    public $producto = null;
     public $editing = false;
 
-    #[Validate('required|string|max:255')]
     public $nombre = '';
-
     public $codigo_interno = '';
-
-    #[Validate('nullable|string|max:255')]
     public $codigo_barra = '';
-
-    #[Validate('nullable|string')]
     public $descripcion = '';
-
-    #[Validate('required|exists:categorias,id')]
     public $categoria_id = '';
-
-    #[Validate('required|numeric|min:0')]
     public $precio_costo = 0;
-
-    #[Validate('required|numeric|min:0')]
     public $precio_venta = 0;
-
-    #[Validate('required|numeric|min:0')]
     public $stock_minimo = 0;
-
-    #[Validate('nullable|image|max:2048')]
     public $imagen_url = null;
-
     public $activo = true;
     public $maneja_stock = true;
 
-    public function mount(?Producto $producto = null)
+    public function mount($producto = null)
     {
         if ($producto && $producto->exists) {
             $this->editing = true;
@@ -56,23 +37,9 @@ class Formulario extends Component
         }
     }
 
-    public function updatedCategoriaId()
-    {
-        $this->validateOnly('categoria_id');
-    }
-
-    public function updatedCodigoInterno()
-    {
-        if ($this->editing) {
-            $this->resetValidation('codigo_interno');
-        } else {
-            $this->validateOnly('codigo_interno');
-        }
-    }
-
     public function save()
     {
-        // Reglas de validación dinámicas
+        // Reglas de validación sin atributos
         $rules = [
             'nombre' => 'required|string|max:255',
             'codigo_interno' => $this->editing 
@@ -143,8 +110,7 @@ class Formulario extends Component
         return redirect()->route('productos.index');
     }
 
-    #[Computed]
-    public function categorias()
+    public function getCategorias()
     {
         $tenantService = app(TenantService::class);
         $empresaId = $tenantService->getEmpresaId();
@@ -162,6 +128,8 @@ class Formulario extends Component
 
     public function render()
     {
-        return view('livewire.productos.formulario');
+        return view('livewire.productos.formulario-fixed', [
+            'categorias' => $this->getCategorias()
+        ]);
     }
 }

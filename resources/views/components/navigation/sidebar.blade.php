@@ -17,7 +17,9 @@
                         <!-- Dashboard -->
                         <li>
                             <a href="{{ route('dashboard') }}" 
-                               class="{{ request()->routeIs('dashboard') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+                               data-fast-nav 
+                               data-module="dashboard"
+                               class="{{ request()->routeIs('dashboard') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-150">
                                 <span class="text-xl">📊</span>
                                 Dashboard
                             </a>
@@ -26,7 +28,9 @@
                         <!-- Productos -->
                         <li>
                             <a href="{{ route('productos.index') }}" 
-                               class="{{ request()->routeIs('productos.*') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+                               data-fast-nav 
+                               data-module="productos"
+                               class="{{ request()->routeIs('productos.*') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-150">
                                 <span class="text-xl">📦</span>
                                 Productos
                             </a>
@@ -34,21 +38,45 @@
                         
                         <!-- POS -->
                         <li>
-                            <a href="#" 
-                               class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+                            <a href="{{ route('pos.index') }}" 
+                               data-fast-nav 
+                               data-module="pos"
+                               class="{{ request()->routeIs('pos.*') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-150">
                                 <span class="text-xl">🛒</span>
                                 Punto de Venta
-                                <span class="ml-auto text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">Próximo</span>
                             </a>
                         </li>
                         
                         <!-- Inventario -->
                         <li>
-                            <a href="#" 
-                               class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold">
+                            <a href="{{ route('inventario.index') }}" 
+                               data-fast-nav 
+                               data-module="inventario"
+                               class="{{ request()->routeIs('inventario.*') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-150">
                                 <span class="text-xl">📊</span>
                                 Inventario
-                                <span class="ml-auto text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded">Próximo</span>
+                            </a>
+                        </li>
+
+                        <!-- Clientes -->
+                        <li>
+                            <a href="{{ route('clientes.index') }}" 
+                               data-fast-nav 
+                               data-module="clientes"
+                               class="{{ request()->routeIs('clientes.*') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-150">
+                                <span class="text-xl">�</span>
+                                Clientes
+                            </a>
+                        </li>
+
+                        <!-- Reportes -->
+                        <li>
+                            <a href="{{ route('reportes.index') }}" 
+                               data-fast-nav 
+                               data-module="reportes"
+                               class="{{ request()->routeIs('reportes.*') ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800' }} group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-150">
+                                <span class="text-xl">📈</span>
+                                Reportes
                             </a>
                         </li>
                     </ul>

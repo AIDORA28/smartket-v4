@@ -54,7 +54,7 @@
                                 <input wire:model="nombre" 
                                        type="text" 
                                        id="nombre" 
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('nombre') border-red-300 @enderror">
+                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                             </div>
                             @error('nombre')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -67,10 +67,10 @@
                                 Código Interno
                             </label>
                             <div class="mt-1">
-                                <input wire:model.blur="codigo_interno" 
+                                <input wire:model="codigo_interno" 
                                        type="text" 
                                        id="codigo_interno" 
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('codigo_interno') border-red-300 @enderror">
+                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                             </div>
                             @error('codigo_interno')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -86,7 +86,7 @@
                                 <input wire:model="codigo_barra" 
                                        type="text" 
                                        id="codigo_barra" 
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('codigo_barra') border-red-300 @enderror">
+                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                             </div>
                             @error('codigo_barra')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -99,11 +99,11 @@
                                 Categoría *
                             </label>
                             <div class="mt-1">
-                                <select wire:model.live="categoria_id" 
+                                <select wire:model="categoria_id" 
                                         id="categoria_id" 
-                                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('categoria_id') border-red-300 @enderror">
+                                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                                     <option value="">Seleccionar categoría</option>
-                                    @foreach($this->categorias as $categoria)
+                                    @foreach($categorias as $categoria)
                                         <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
                                     @endforeach
                                 </select>
@@ -122,7 +122,7 @@
                                 <textarea wire:model="descripcion" 
                                           id="descripcion" 
                                           rows="3" 
-                                          class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('descripcion') border-red-300 @enderror"
+                                          class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
                                           placeholder="Descripción del producto..."></textarea>
                             </div>
                             @error('descripcion')
@@ -146,14 +146,14 @@
                             </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                    <span class="text-gray-500 sm:text-sm">S/</span>
                                 </div>
                                 <input wire:model="precio_costo" 
                                        type="number" 
                                        step="0.01" 
                                        min="0"
                                        id="precio_costo" 
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-md @error('precio_costo') border-red-300 @enderror">
+                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-md">
                             </div>
                             @error('precio_costo')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -167,14 +167,14 @@
                             </label>
                             <div class="mt-1 relative rounded-md shadow-sm">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                    <span class="text-gray-500 sm:text-sm">S/</span>
                                 </div>
                                 <input wire:model="precio_venta" 
                                        type="number" 
                                        step="0.01" 
                                        min="0"
                                        id="precio_venta" 
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-md @error('precio_venta') border-red-300 @enderror">
+                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-md">
                             </div>
                             @error('precio_venta')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -191,7 +191,7 @@
                                        type="number" 
                                        min="0"
                                        id="stock_minimo" 
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('stock_minimo') border-red-300 @enderror">
+                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                             </div>
                             @error('stock_minimo')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -206,7 +206,7 @@
                             <div class="text-sm text-gray-600">
                                 <strong>Margen de ganancia:</strong> 
                                 @if($precio_venta > $precio_costo)
-                                    ${{ number_format($precio_venta - $precio_costo, 2) }} 
+                                    S/{{ number_format($precio_venta - $precio_costo, 2) }} 
                                     ({{ number_format((($precio_venta - $precio_costo) / $precio_costo) * 100, 1) }}%)
                                 @else
                                     <span class="text-red-600">Precio de venta menor al costo</span>
@@ -214,89 +214,6 @@
                             </div>
                         </div>
                     @endif
-                </div>
-            </div>
-
-            <!-- Imagen y Configuración -->
-            <div class="bg-white overflow-hidden shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Imagen y Configuración</h3>
-                    
-                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <!-- Imagen -->
-                        <div>
-                            <label for="imagen" class="block text-sm font-medium text-gray-700">
-                                Imagen del Producto
-                            </label>
-                            <div class="mt-1">
-                                <input wire:model="imagen_url" 
-                                       type="file" 
-                                       id="imagen_url" 
-                                       accept="image/*"
-                                       class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md @error('imagen_url') border-red-300 @enderror">
-                            </div>
-                            @error('imagen_url')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                            
-                            <!-- Preview de imagen -->
-                            <div class="mt-3">
-                                @if($imagen_url)
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-shrink-0">
-                                            <img src="{{ $imagen_url->temporaryUrl() }}" 
-                                                 alt="Preview" 
-                                                 class="h-20 w-20 rounded-lg object-cover">
-                                        </div>
-                                        <div class="text-sm text-gray-500">
-                                            Nueva imagen seleccionada
-                                        </div>
-                                    </div>
-                                @elseif($editing && $producto && $producto->imagen)
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-shrink-0">
-                                            <img src="{{ asset('storage/' . $producto->imagen) }}" 
-                                                 alt="{{ $producto->nombre }}" 
-                                                 class="h-20 w-20 rounded-lg object-cover">
-                                        </div>
-                                        <div class="text-sm text-gray-500">
-                                            Imagen actual
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Configuración -->
-                        <div class="space-y-4">
-                            <!-- Estado -->
-                            <div class="flex items-center">
-                                <input wire:model="activo" 
-                                       id="activo" 
-                                       type="checkbox" 
-                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-                                <label for="activo" class="ml-2 block text-sm text-gray-900">
-                                    Producto activo
-                                </label>
-                            </div>
-
-                            <!-- Control de Stock -->
-                            <div class="flex items-center">
-                                <input wire:model="controla_stock" 
-                                       id="controla_stock" 
-                                       type="checkbox" 
-                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded">
-                                <label for="controla_stock" class="ml-2 block text-sm text-gray-900">
-                                    Controlar stock
-                                </label>
-                            </div>
-
-                            <div class="text-xs text-gray-500">
-                                <p>• Producto activo: Se muestra en catálogos y puede venderse</p>
-                                <p>• Controlar stock: El sistema descontará automáticamente el stock en las ventas</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 

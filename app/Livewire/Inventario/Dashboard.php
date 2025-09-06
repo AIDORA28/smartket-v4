@@ -23,6 +23,7 @@ class Dashboard extends Component
     public $stockFiltro = 'todos'; // todos, bajo, sin_stock, exceso
     public $ordenarPor = 'nombre'; // nombre, stock, categoria, movimiento
     public $direccion = 'asc';
+    public $productoDestacado = null; // Para destacar un producto específico
     
     // Estadísticas
     public $totalProductos = 0;
@@ -44,6 +45,12 @@ class Dashboard extends Component
     {
         $this->tenantService = app(TenantService::class);
         $this->calcularEstadisticas();
+        
+        // Si viene un producto específico en la URL, destacarlo
+        if (request('producto')) {
+            $this->productoDestacado = request('producto');
+            $this->search = ''; // Limpiar búsqueda para mostrar el producto destacado
+        }
     }
 
     public function render()

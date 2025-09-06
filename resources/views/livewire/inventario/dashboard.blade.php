@@ -71,6 +71,64 @@
         </div>
     </div>
 
+    <!-- Producto Destacado (cuando viene del Catálogo) -->
+    @if($productoDestacado)
+        @php
+            $producto = App\Models\Producto::with(['categoria', 'stocks'])->find($productoDestacado);
+        @endphp
+        @if($producto)
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 shadow-lg rounded-lg mb-6">
+                <div class="p-6">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                @if($producto->imagen_url)
+                                    <img src="{{ $producto->imagen_url }}" alt="{{ $producto->nombre }}" class="w-16 h-16 rounded-lg object-cover">
+                                @else
+                                    <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                        </svg>
+                                    </div>
+                                @endif
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $producto->nombre }}</h3>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        Viniste desde Catálogo
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-600">{{ $producto->categoria->nombre ?? 'Sin categoría' }} • {{ $producto->codigo_interno ?? 'Sin código' }}</p>
+                                <div class="mt-2 flex items-center space-x-4">
+                                    <span class="text-sm">
+                                        <strong>Stock Total:</strong> 
+                                        <span class="@if($producto->stock_total <= $producto->stock_minimo) text-red-600 font-semibold @else text-green-600 @endif">
+                                            {{ number_format($producto->stock_total, 2) }}
+                                        </span>
+                                    </span>
+                                    <span class="text-sm text-gray-500">Min: {{ $producto->stock_minimo }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button wire:click="abrirModalAjuste({{ $producto->id }})" 
+                                    class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
+                                Ajustar Stock
+                            </button>
+                            <button wire:click="$set('productoDestacado', null)" 
+                                    class="text-gray-400 hover:text-gray-600" title="Cerrar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endif
+
     <!-- Filtros y controles -->
     <div class="bg-white shadow rounded-lg">
         <div class="p-6">
@@ -118,16 +176,21 @@
 
             <!-- Botones de acción -->
             <div class="flex flex-wrap gap-3">
-                <a href="{{ route('productos.crear') }}" 
+                <a href="{{ route('productos.index') }}" 
                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
-                    Nuevo Producto
+                    Ver Catálogo
                 </a>
                 
-                <a href="{{ route('categorias.index') }}" 
-                   class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors inline-flex items-center">
+                <button wire:click="exportarInventario" 
+                        class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors inline-flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                    </svg>
+                    Exportar Excel
+                </button>
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-4H5m4 8H5"></path>
                     </svg>

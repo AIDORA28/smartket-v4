@@ -198,6 +198,9 @@
     <!-- Custom Scripts -->
     @stack('scripts')
     
+    <!-- Fast Navigation System -->
+    <script src="{{ asset('js/fast-navigation.js') }}"></script>
+    
     <!-- Debug Livewire Connection -->
     <script>
         // Verificar que todo esté cargado correctamente
@@ -205,6 +208,7 @@
             console.log('🔧 Layout Debug:');
             console.log('  - Alpine disponible:', typeof window.Alpine !== 'undefined');
             console.log('  - Livewire disponible:', typeof window.Livewire !== 'undefined');
+            console.log('  - Fast Navigation disponible:', typeof window.SmartKetRouter !== 'undefined');
             
             // Auto-hide success messages after 5 seconds
             setTimeout(() => {

@@ -22,10 +22,10 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     });
     
     // Módulo de Productos e Inventario
-    // Productos
-Route::get('productos', \App\Livewire\Productos\Lista::class)->name('productos.index');
-Route::get('productos/crear', \App\Livewire\Productos\Formulario::class)->name('productos.crear');
-Route::get('productos/{producto}/editar', \App\Livewire\Productos\Formulario::class)->name('productos.editar');
+    // Productos  
+Route::get('productos', \App\Livewire\Productos\ListaOptimizada::class)->name('productos.index');
+Route::get('productos/crear', \App\Livewire\Productos\FormularioFixed::class)->name('productos.crear');
+Route::get('productos/{producto}/editar', \App\Livewire\Productos\FormularioFixed::class)->name('productos.editar');
     Route::post('productos/{producto}/ajustar-stock', [ProductoController::class, 'ajustarStock'])->name('productos.ajustar-stock');
     Route::resource('categorias', CategoriaController::class)->except(['show']);
     
@@ -121,6 +121,11 @@ Route::get('productos/{producto}/editar', \App\Livewire\Productos\Formulario::cl
         Route::get('/dashboard-ejecutivo', function () {
             return view('placeholder', ['module' => 'Dashboard Ejecutivo']);
         })->name('dashboard.ejecutivo');
+    });
+    
+    // Módulo de Configuraciones Avanzadas
+    Route::prefix('configuraciones')->name('configuraciones.')->group(function () {
+        Route::get('/', \App\Livewire\Configuraciones\Index::class)->name('index');
     });
     
     // Módulo de Administración (Solo admins)

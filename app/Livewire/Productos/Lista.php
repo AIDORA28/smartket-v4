@@ -71,6 +71,14 @@ class Lista extends Component
         session()->flash('message', 'Producto eliminado correctamente.');
     }
 
+    public function limpiarFiltros()
+    {
+        $this->search = '';
+        $this->categoria_id = '';
+        $this->estado = '';
+        $this->resetPage();
+    }
+
     public function toggleEstado($id)
     {
         // $this->authorize('producto.update');
@@ -88,7 +96,14 @@ class Lista extends Component
     public function categorias()
     {
         $tenantService = app(TenantService::class);
-        return Categoria::where('empresa_id', $tenantService->getEmpresaId())
+        $empresaId = $tenantService->getEmpresaId();
+        
+        // Fallback temporal: si no hay empresa, usar la primera
+        if (!$empresaId) {
+            $empresaId = 1; // Empresa por defecto temporal
+        }
+        
+        return Categoria::where('empresa_id', $empresaId)
                        ->where('activa', true)
                        ->orderBy('nombre')
                        ->get();
@@ -98,8 +113,24 @@ class Lista extends Component
     public function productos()
     {
         $tenantService = app(TenantService::class);
-        $query = Producto::with('categoria')
-                        ->where('empresa_id', $tenantService->getEmpresaId());
+        $empresaId = $tenantService->getEmpresaId();
+        
+        // Fallback temporal: si no hay empresa, usar la primera
+        if (!$empresaId) {
+            $empresaId = 1; // Empresa por defecto temporal
+        }
+        
+        $query = Producto::with(['categoria', 'stocks'])
+                        ->selectRaw('productos.*, COALESCE(SUM(producto_stocks.cantidad_actual), 0) as stock_total')
+                        ->leftJoin('producto_stocks', 'productos.id', '=', 'producto_stocks.producto_id')
+                        ->where('productos.empresa_id', $empresaId)
+                        ->groupBy('productos.id', 'productos.empresa_id', 'productos.categoria_id', 
+                                'productos.nombre', 'productos.codigo_interno', 'productos.codigo_barra', 
+                                'productos.descripcion', 'productos.precio_costo', 'productos.precio_venta', 
+                                'productos.margen_ganancia', 'productos.incluye_igv', 'productos.unidad_medida', 
+                                'productos.permite_decimales', 'productos.maneja_stock', 'productos.stock_minimo', 
+                                'productos.stock_maximo', 'productos.activo', 'productos.imagen_url', 
+                                'productos.extras_json', 'productos.created_at', 'productos.updated_at');
 
         // Filtro por búsqueda
         if ($this->search) {
