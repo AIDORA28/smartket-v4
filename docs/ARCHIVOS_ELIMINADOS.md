@@ -12,6 +12,14 @@
 - ❌ `test_login.php` - Script temporal eliminado (si existía)
 - ❌ `test_pos_funcionalidad.php` - Script temporal eliminado (si existía)
 
+### **Archivos temporales de prueba (PUBLIC)**
+- ❌ `public/dashboard-test.html` - HTML de testing eliminado (4.9 KB)
+- ❌ `public/test-reportes.html` - HTML de testing eliminado (2.8 KB)
+
+### **Archivos temporales/logs limpiados**
+- ❌ `storage/app/private/exports/test_export.csv` - Export temporal eliminado
+- 🧹 `storage/logs/laravel.log` - Log limpiado (65 MB → 0 bytes)
+
 ### **Archivos de configuración innecesarios**
 - ❌ `.npmrc` - Usamos PNPM, no NPM
 - ❌ `package-lock.json` - Usamos pnpm-lock.yaml
