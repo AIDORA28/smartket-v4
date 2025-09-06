@@ -1,9 +1,9 @@
 {
   "framework": "vite",
-  "buildCommand": "composer install --no-dev --optimize-autoloader && pnpm run build",
+  "buildCommand": "composer install --no-dev --optimize-autoloader && npm run build",
   "outputDirectory": "public",
-  "installCommand": "pnpm install",
-  "devCommand": "pnpm run dev",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev",
   "env": {
     "APP_ENV": "production",
     "APP_DEBUG": "false"
