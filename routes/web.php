@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas públicas
@@ -13,8 +14,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     
-    // Dashboard principal
-    Route::get('/dashboard', \App\Livewire\Dashboard::class)->name('dashboard');
+    // Dashboard principal con React + Inertia
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Rutas de gestión de tenant
     Route::prefix('tenant')->name('tenant.')->group(function () {

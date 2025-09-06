@@ -1,0 +1,20 @@
+# PNPM Configuration for Vercel
+registry=https://registry.npmjs.org/
+auto-install-peers=true
+shamefully-hoist=true
+strict-peer-dependencies=false
+
+# Network optimizations
+network-timeout=300000
+fetch-retries=3
+fetch-retry-factor=10
+fetch-retry-mintimeout=10000
+fetch-retry-maxtimeout=60000
+
+# Vercel-specific fixes
+prefer-frozen-lockfile=false
+enable-pre-post-scripts=true
+
+# Registry mirrors (fallbacks)
+@types:registry=https://registry.npmjs.org/
+@babel:registry=https://registry.npmjs.org/

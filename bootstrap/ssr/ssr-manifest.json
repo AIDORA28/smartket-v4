@@ -1,0 +1,12 @@
+{
+  "node_modules/.pnpm/laravel-vite-plugin@1.3.0_vite@5.4.19_@types+node@22.18.1_/node_modules/laravel-vite-plugin/inertia-helpers/index.js": [],
+  "resources/css/app.css": [],
+  "resources/js/Layouts/AuthenticatedLayout.tsx": [
+    "/build/assets/Dashboard-OTO4DwuT.js"
+  ],
+  "resources/js/Pages/Dashboard.tsx": [
+    "/build/assets/Dashboard-OTO4DwuT.js"
+  ],
+  "resources/js/bootstrap.js": [],
+  "resources/js/ssr.tsx": []
+}

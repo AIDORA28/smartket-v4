@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'empresa.scope' => \App\Http\Middleware\EmpresaScope::class,
             'feature.guard' => \App\Http\Middleware\FeatureGuard::class,
         ]);
+        
+        // Inertia.js middleware
+        $middleware->web(append: [
+            \App\Http\Middleware\HandleInertiaRequests::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
