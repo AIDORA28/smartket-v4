@@ -1,0 +1,20 @@
+{
+  "framework": "vite",
+  "buildCommand": "composer install --no-dev --optimize-autoloader && pnpm run build",
+  "outputDirectory": "public",
+  "installCommand": "pnpm install",
+  "devCommand": "pnpm run dev",
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false"
+  },
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.6.0"
+    }
+  },
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/api/index.php" }
+  ]
+}
