@@ -15,35 +15,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Crear planes
-        $planBasico = Plan::create([
-            'nombre' => 'FREE_BASIC',
-            'max_usuarios' => 3,
-            'max_sucursales' => 1,
-            'max_productos' => 100,
-            'limites_json' => json_encode([
-                'ventas_diarias' => 50,
-                'storage_mb' => 100,
-                'reportes_basicos' => true,
-            ]),
-            'activo' => 1,
-            'grace_percent' => 10
+        // Ejecutar seeders principales
+        $this->call([
+            PlanSeeder::class,
+            PlanAddonSeeder::class,
         ]);
 
-        $planAvanzado = Plan::create([
-            'nombre' => 'STANDARD',
-            'max_usuarios' => 10,
-            'max_sucursales' => 5,
-            'max_productos' => 1000,
-            'limites_json' => json_encode([
-                'ventas_diarias' => 500,
-                'storage_mb' => 1000,
-                'reportes_avanzados' => true,
-                'facturacion_electronica' => true,
-            ]),
-            'activo' => 1,
-            'grace_percent' => 10
-        ]);
+        // Obtener planes creados
+        $planBasico = Plan::where('nombre', 'FREE')->first();
+        $planAvanzado = Plan::where('nombre', 'PROFESIONAL')->first();
 
         // Crear rubros
         $rubroTienda = Rubro::create([
@@ -103,7 +83,6 @@ class DatabaseSeeder extends Seeder
             'sucursal_id' => $sucursal->id,
             'name' => 'José Pérez',
             'email' => 'admin@donj.com',
-            'nombre' => 'José Pérez',
             'password_hash' => Hash::make('password123'),
             'rol_principal' => 'owner',
             'activo' => 1,
@@ -159,7 +138,6 @@ class DatabaseSeeder extends Seeder
             'sucursal_id' => $sucursal2->id,
             'name' => 'María García',
             'email' => 'admin@esperanza.com',
-            'nombre' => 'María García',
             'password_hash' => Hash::make('password123'),
             'rol_principal' => 'owner',
             'activo' => 1,

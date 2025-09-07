@@ -35,7 +35,8 @@
   },
   "include": [
     "resources/js/**/*",
-    "resources/js/**/*.d.ts"
+    "resources/js/**/*.d.ts",
+    "resources/js/types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

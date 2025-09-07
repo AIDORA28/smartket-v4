@@ -14,6 +14,27 @@ class TenantController extends Controller
         $this->tenantService = $tenantService;
     }
 
+    public function switchEmpresa(Request $request)
+    {
+        $request->validate([
+            'empresa_id' => 'required|integer|exists:empresas,id'
+        ]);
+
+        try {
+            $this->tenantService->setEmpresa($request->empresa_id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Empresa cambiada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo cambiar la empresa'
+            ], 500);
+        }
+    }
+
     public function switchSucursal(Request $request)
     {
         $request->validate([
@@ -23,9 +44,15 @@ class TenantController extends Controller
         try {
             $this->tenantService->setSucursal($request->sucursal_id);
             
-            return redirect()->back()->with('success', 'Sucursal cambiada correctamente');
+            return response()->json([
+                'success' => true,
+                'message' => 'Sucursal cambiada correctamente'
+            ]);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'No se pudo cambiar la sucursal');
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo cambiar la sucursal'
+            ], 500);
         }
     }
 }

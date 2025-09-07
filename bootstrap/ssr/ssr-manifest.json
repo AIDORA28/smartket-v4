@@ -1,11 +1,125 @@
 {
   "node_modules/.pnpm/laravel-vite-plugin@1.3.0_vite@5.4.19_@types+node@22.18.1_/node_modules/laravel-vite-plugin/inertia-helpers/index.js": [],
   "resources/css/app.css": [],
+  "resources/js/Components/Button.tsx": [
+    "/build/assets/Button-DrUMbt6l.js"
+  ],
+  "resources/js/Components/Card.tsx": [
+    "/build/assets/Button-DrUMbt6l.js"
+  ],
+  "resources/js/Components/StatsCard.tsx": [
+    "/build/assets/Inventory-Dalvrv4y.js"
+  ],
+  "resources/js/Components/auth/AuthLayout.tsx": [
+    "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/auth/AuthNavigation.tsx": [
+    "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/auth/Button.tsx": [
+    "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/auth/Checkbox.tsx": [
+    "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/auth/DemoCredentials.tsx": [
+    "/build/assets/Login-G2480SHj.js"
+  ],
+  "resources/js/Components/auth/Input.tsx": [
+    "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/auth/LoginForm.tsx": [
+    "/build/assets/Login-G2480SHj.js"
+  ],
+  "resources/js/Components/auth/RegisterForm.tsx": [
+    "/build/assets/Register-Bg8_POC9.js"
+  ],
+  "resources/js/Components/auth/StatusMessage.tsx": [
+    "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/landing/CTASection.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/FeatureCard.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/FeaturesSection.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/Footer.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/HeroSection.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/Navbar.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/PriceCard.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/PriceToggle.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/PricingSection.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/StatsSection.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/TestimonialCard.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/landing/TestimonialsSection.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Components/ui/Button.tsx": [
+    "/build/assets/Card-DoF5IT7l.js"
+  ],
+  "resources/js/Components/ui/Card.tsx": [
+    "/build/assets/Card-DoF5IT7l.js"
+  ],
+  "resources/js/Components/ui/StatsCard.tsx": [
+    "/build/assets/StatsCard-DHQ101IL.js"
+  ],
   "resources/js/Layouts/AuthenticatedLayout.tsx": [
-    "/build/assets/Dashboard-OTO4DwuT.js"
+    "/build/assets/AuthenticatedLayout-BfjI-KKz.js"
+  ],
+  "resources/js/Pages/Auth/Login.tsx": [
+    "/build/assets/Login-G2480SHj.js"
+  ],
+  "resources/js/Pages/Auth/Register.tsx": [
+    "/build/assets/Register-Bg8_POC9.js"
+  ],
+  "resources/js/Pages/Clients.tsx": [
+    "/build/assets/Clients--t5WTafx.js"
   ],
   "resources/js/Pages/Dashboard.tsx": [
-    "/build/assets/Dashboard-OTO4DwuT.js"
+    "/build/assets/Dashboard-CO8CO0US.js"
+  ],
+  "resources/js/Pages/Inventory.tsx": [
+    "/build/assets/Inventory-Dalvrv4y.js"
+  ],
+  "resources/js/Pages/Inventory/Movements.tsx": [
+    "/build/assets/Movements-BSu0Xw2P.js"
+  ],
+  "resources/js/Pages/POS.tsx": [
+    "/build/assets/POS-Bj4Fq30W.js"
+  ],
+  "resources/js/Pages/Placeholder.tsx": [
+    "/build/assets/Placeholder-GyOBfcWG.js"
+  ],
+  "resources/js/Pages/Products.tsx": [
+    "/build/assets/Products-gcz6XsIY.js"
+  ],
+  "resources/js/Pages/Public/Landing.tsx": [
+    "/build/assets/Landing-BJFAWIDS.js"
+  ],
+  "resources/js/Pages/Reports.tsx": [
+    "/build/assets/Reports-CIU24TQT.js"
+  ],
+  "resources/js/Pages/Sales.tsx": [
+    "/build/assets/Sales-DcjMZFoK.js"
   ],
   "resources/js/bootstrap.js": [],
   "resources/js/ssr.tsx": []

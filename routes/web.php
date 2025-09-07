@@ -5,12 +5,22 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\PosController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ConfigurationController;
+use App\Http\Controllers\PlaceholderController;
+use App\Http\Controllers\PublicController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 // Rutas públicas
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [PublicController::class, 'landing'])->name('landing');
+Route::get('/precios', [PublicController::class, 'precios'])->name('precios');
+Route::get('/caracteristicas', [PublicController::class, 'caracteristicas'])->name('caracteristicas');
 
 Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     
@@ -19,134 +29,134 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     
     // Rutas de gestión de tenant
     Route::prefix('tenant')->name('tenant.')->group(function () {
+        Route::post('/switch-empresa', [TenantController::class, 'switchEmpresa'])->name('switch-empresa');
         Route::post('/switch-sucursal', [TenantController::class, 'switchSucursal'])->name('switch-sucursal');
     });
     
     // Módulo de Productos e Inventario
-    // Productos  
-Route::get('productos', \App\Livewire\Productos\ListaOptimizada::class)->name('productos.index');
-Route::get('productos/crear', \App\Livewire\Productos\FormularioFixed::class)->name('productos.crear');
-Route::get('productos/{producto}/editar', \App\Livewire\Productos\FormularioFixed::class)->name('productos.editar');
+    // Productos con React + Inertia
+    Route::get('productos', [ProductController::class, 'index'])->name('productos.index');
+    Route::post('productos', [ProductController::class, 'store'])->name('productos.store');
+    Route::put('productos/{id}', [ProductController::class, 'update'])->name('productos.update');
+    Route::delete('productos/{id}', [ProductController::class, 'destroy'])->name('productos.destroy');
     Route::post('productos/{producto}/ajustar-stock', [ProductoController::class, 'ajustarStock'])->name('productos.ajustar-stock');
     Route::resource('categorias', CategoriaController::class)->except(['show']);
     
     Route::prefix('inventario')->name('inventario.')->group(function () {
-        Route::get('/', \App\Livewire\Inventario\Dashboard::class)->name('index');
-        Route::get('/movimientos', \App\Livewire\Inventario\Movimientos::class)->name('movimientos');
-        Route::get('/transferencias', function () {
-            return view('placeholder', ['module' => 'Transferencias entre Sucursales']);
-        })->name('transferencias');
+        Route::get('/', [InventoryController::class, 'index'])->name('index');
+        Route::get('/movements', [InventoryController::class, 'movements'])->name('movements');
+        Route::post('/adjust-stock', [InventoryController::class, 'adjustStock'])->name('adjust-stock');
+        Route::get('/transferencias', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'transferencias')
+            ->name('transferencias');
     });
     
-    // Módulo de Ventas y POS
+    // Módulo de Ventas y POS con React + Inertia
     Route::prefix('pos')->name('pos.')->group(function () {
-        Route::get('/', \App\Livewire\Pos\Index::class)->name('index');
+        Route::get('/', [PosController::class, 'index'])->name('index');
+        Route::post('/sale', [PosController::class, 'processSale'])->name('sale');
     });
     
     Route::prefix('ventas')->name('ventas.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Historial de Ventas']);
-        })->name('index');
-        Route::get('/{venta}', function () {
-            return view('placeholder', ['module' => 'Detalle de Venta']);
-        })->name('show');
+        Route::get('/', [SaleController::class, 'index'])->name('index');
+        Route::get('/{id}', [SaleController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [SaleController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [SaleController::class, 'update'])->name('update');
+        Route::delete('/{id}', [SaleController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/cancel', [SaleController::class, 'cancel'])->name('cancel');
+        Route::post('/{id}/complete', [SaleController::class, 'complete'])->name('complete');
     });
     
     Route::prefix('clientes')->name('clientes.')->group(function () {
-        Route::get('/', \App\Livewire\Clientes\Lista::class)->name('index');
-        Route::get('/crear', \App\Livewire\Clientes\Formulario::class)->name('crear');
-        Route::get('/{cliente}', \App\Livewire\Clientes\Detalle::class)->name('show');
+        Route::get('/', [ClientController::class, 'index'])->name('index');
+        Route::post('/', [ClientController::class, 'store'])->name('store');
+        Route::get('/{id}', [ClientController::class, 'show'])->name('show');
+        Route::put('/{id}', [ClientController::class, 'update'])->name('update');
+        Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
     
     // Módulo de Caja
     Route::prefix('caja')->name('caja.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Sistema de Caja', 'description' => 'Apertura, cierre y arqueo de caja']);
-        })->name('index');
+        Route::get('/', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'caja')
+            ->name('index');
         Route::post('/abrir', function () {
-            return redirect()->back()->with('status', 'Caja abierta exitosamente');
+            return redirect()->back()->with('success', 'Caja abierta exitosamente');
         })->name('abrir');
         Route::post('/cerrar', function () {
-            return redirect()->back()->with('status', 'Caja cerrada exitosamente');
+            return redirect()->back()->with('success', 'Caja cerrada exitosamente');
         })->name('cerrar');
     });
     
     // Módulo de Compras
     Route::prefix('compras')->name('compras.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Órdenes de Compra']);
-        })->name('index');
-        Route::get('/create', function () {
-            return view('placeholder', ['module' => 'Nueva Orden de Compra']);
-        })->name('create');
+        Route::get('/', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'compras')
+            ->name('index');
+        Route::get('/create', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'compras')
+            ->name('create');
     });
     
     Route::prefix('proveedores')->name('proveedores.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Gestión de Proveedores']);
-        })->name('index');
-        Route::get('/create', function () {
-            return view('placeholder', ['module' => 'Nuevo Proveedor']);
-        })->name('create');
+        Route::get('/', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'proveedores')
+            ->name('index');
+        Route::get('/create', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'proveedores')
+            ->name('create');
     });
     
     // Módulo de Lotes y Vencimientos
     Route::prefix('lotes')->name('lotes.')->group(function () {
-        Route::get('/', function () {
-            return view('placeholder', ['module' => 'Lotes y Vencimientos', 'description' => 'Control FIFO y alertas de vencimiento']);
-        })->name('index');
-        Route::get('/vencimientos', function () {
-            return view('placeholder', ['module' => 'Alertas de Vencimiento']);
-        })->name('vencimientos');
-        Route::get('/trazabilidad', function () {
-            return view('placeholder', ['module' => 'Trazabilidad de Productos']);
-        })->name('trazabilidad');
+        Route::get('/', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'lotes')
+            ->name('index');
+        Route::get('/vencimientos', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'lotes')
+            ->name('vencimientos');
+        Route::get('/trazabilidad', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'lotes')
+            ->name('trazabilidad');
     });
     
-    // Módulo de Reportes y Analytics
+    // Módulo de Reportes y Analytics con React + Inertia
     Route::prefix('reportes')->name('reportes.')->group(function () {
-        Route::get('/', \App\Livewire\Reportes\Index::class)->name('index');
-        Route::get('/ventas', \App\Livewire\Reportes\Sales::class)->name('ventas');
-        Route::get('/inventario', function () {
-            return view('placeholder', ['module' => 'Reportes de Inventario']);
-        })->name('inventario');
-        Route::get('/clientes', function () {
-            return view('placeholder', ['module' => 'Reportes de Clientes']);
-        })->name('clientes');
-        Route::get('/productos', function () {
-            return view('placeholder', ['module' => 'Análisis de Productos']);
-        })->name('productos');
-        Route::get('/analytics', function () {
-            return view('placeholder', ['module' => 'Analytics y Eventos']);
-        })->name('analytics');
-        Route::get('/dashboard-ejecutivo', function () {
-            return view('placeholder', ['module' => 'Dashboard Ejecutivo']);
-        })->name('dashboard.ejecutivo');
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::post('/export', [ReportController::class, 'export'])->name('export');
     });
     
-    // Módulo de Configuraciones Avanzadas
+    // Módulo de Configuraciones con React + Inertia
     Route::prefix('configuraciones')->name('configuraciones.')->group(function () {
-        Route::get('/', \App\Livewire\Configuraciones\Index::class)->name('index');
+        Route::get('/', [ConfigurationController::class, 'index'])->name('index');
+        Route::put('/empresa', [ConfigurationController::class, 'updateEmpresa'])->name('empresa.update');
+        Route::post('/usuarios', [ConfigurationController::class, 'createUser'])->name('usuarios.store');
+        Route::put('/usuarios/{id}', [ConfigurationController::class, 'updateUser'])->name('usuarios.update');
+        Route::delete('/usuarios/{id}', [ConfigurationController::class, 'deleteUser'])->name('usuarios.destroy');
+        Route::post('/sucursales', [ConfigurationController::class, 'createSucursal'])->name('sucursales.store');
+        Route::put('/sucursales/{id}', [ConfigurationController::class, 'updateSucursal'])->name('sucursales.update');
+        Route::delete('/sucursales/{id}', [ConfigurationController::class, 'deleteSucursal'])->name('sucursales.destroy');
+        Route::put('/features/{id}', [ConfigurationController::class, 'updateFeature'])->name('features.update');
     });
     
     // Módulo de Administración (Solo admins)
     Route::prefix('admin')->name('admin.')->middleware('can:admin')->group(function () {
         Route::prefix('empresas')->name('empresas.')->group(function () {
-            Route::get('/', function () {
-                return view('placeholder', ['module' => 'Gestión de Empresas', 'description' => 'Configuración multi-tenant']);
-            })->name('index');
+            Route::get('/', [PlaceholderController::class, 'show'])
+                ->defaults('module', 'admin-empresas')
+                ->name('index');
         });
         
         Route::prefix('usuarios')->name('usuarios.')->group(function () {
-            Route::get('/', function () {
-                return view('placeholder', ['module' => 'Gestión de Usuarios', 'description' => 'Roles y permisos']);
-            })->name('index');
+            Route::get('/', [PlaceholderController::class, 'show'])
+                ->defaults('module', 'admin-usuarios')
+                ->name('index');
         });
         
         Route::prefix('feature-flags')->name('feature-flags.')->group(function () {
-            Route::get('/', function () {
-                return view('placeholder', ['module' => 'Feature Flags', 'description' => 'Control de funcionalidades por plan']);
-            })->name('index');
+            Route::get('/', [PlaceholderController::class, 'show'])
+                ->defaults('module', 'feature-flags')
+                ->name('index');
         });
     });
     

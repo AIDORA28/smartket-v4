@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { 
   ChartBarIcon,
   CubeIcon,
@@ -9,10 +9,10 @@ import {
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  DocumentChartBarIcon
 } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
-import { User, Tenant } from '@/Types';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -20,15 +20,40 @@ interface AuthenticatedLayoutProps {
   title?: string;
 }
 
-// PageProps local para evitar conflictos con Inertia
-interface LocalPageProps {
+// Interfaces for page props
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  empresa_id?: number;
+  sucursal_id?: number;
+  role?: string;
+}
+
+interface Empresa {
+  id: number;
+  nombre: string;
+  logo?: string;
+}
+
+interface Sucursal {
+  id: number;
+  nombre: string;
+}
+
+interface PageProps {
   auth: {
     user: User;
-    tenant: Tenant;
   };
+  empresa: Empresa | null;
+  sucursal: Sucursal | null;
+  empresas_disponibles: Empresa[];
+  sucursales_disponibles: Sucursal[];
   flash?: {
-    type: 'success' | 'error' | 'warning' | 'info';
-    message: string;
+    success?: string;
+    error?: string;
+    warning?: string;
+    message?: string;
   };
   [key: string]: any;
 }
@@ -44,6 +69,12 @@ const navigation = [
     name: 'Productos', 
     href: '/productos', 
     icon: CubeIcon,
+    current: false 
+  },
+  { 
+    name: 'POS', 
+    href: '/pos', 
+    icon: ShoppingCartIcon,
     current: false 
   },
   { 
@@ -65,8 +96,14 @@ const navigation = [
     current: false 
   },
   { 
-    name: 'Configuración', 
-    href: '/configuracion', 
+    name: 'Reportes', 
+    href: '/reportes', 
+    icon: DocumentChartBarIcon,
+    current: false 
+  },
+  { 
+    name: 'Configuraciones', 
+    href: '/configuraciones', 
     icon: Cog6ToothIcon,
     current: false 
   }
@@ -77,8 +114,12 @@ export default function AuthenticatedLayout({
   header, 
   title 
 }: AuthenticatedLayoutProps) {
-  const { auth, flash } = usePage<LocalPageProps>().props;
+  const { auth, empresa, sucursal, empresas_disponibles, sucursales_disponibles, flash } = usePage<PageProps>().props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    router.post('/logout');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -138,11 +179,13 @@ export default function AuthenticatedLayout({
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center">
+          <div className="flex h-16 shrink-0 items-center justify-between">
             <h1 className="text-xl font-bold text-white">SmartKet v4</h1>
-            <span className="ml-2 text-xs text-indigo-200">
-              {auth.tenant.name}
-            </span>
+            {empresa && (
+              <span className="text-xs text-indigo-200">
+                {empresa.nombre}
+              </span>
+            )}
           </div>
           
           <nav className="flex flex-1 flex-col">
@@ -212,7 +255,18 @@ export default function AuthenticatedLayout({
                   {auth.user.name}
                 </span>
                 <p className="text-xs text-gray-500">{auth.user.email}</p>
+                {empresa && (
+                  <p className="text-xs text-blue-600">{empresa.nombre}</p>
+                )}
               </div>
+              
+              <button
+                onClick={handleLogout}
+                className="text-gray-500 hover:text-gray-700"
+                title="Cerrar Sesión"
+              >
+                <ArrowRightOnRectangleIcon className="h-5 w-5" />
+              </button>
             </div>
           </div>
         </div>
@@ -221,15 +275,28 @@ export default function AuthenticatedLayout({
           <div className="px-4 sm:px-6 lg:px-8">
             {/* Flash messages */}
             {flash && (
-              <div className={clsx(
-                'mb-6 rounded-md p-4',
-                flash.type === 'success' && 'bg-green-50 border border-green-200 text-green-800',
-                flash.type === 'error' && 'bg-red-50 border border-red-200 text-red-800',
-                flash.type === 'warning' && 'bg-yellow-50 border border-yellow-200 text-yellow-800',
-                flash.type === 'info' && 'bg-blue-50 border border-blue-200 text-blue-800'
-              )}>
-                {flash.message}
-              </div>
+              <>
+                {flash.success && (
+                  <div className="mb-6 rounded-md p-4 bg-green-50 border border-green-200 text-green-800">
+                    {flash.success}
+                  </div>
+                )}
+                {flash.error && (
+                  <div className="mb-6 rounded-md p-4 bg-red-50 border border-red-200 text-red-800">
+                    {flash.error}
+                  </div>
+                )}
+                {flash.warning && (
+                  <div className="mb-6 rounded-md p-4 bg-yellow-50 border border-yellow-200 text-yellow-800">
+                    {flash.warning}
+                  </div>
+                )}
+                {flash.message && (
+                  <div className="mb-6 rounded-md p-4 bg-blue-50 border border-blue-200 text-blue-800">
+                    {flash.message}
+                  </div>
+                )}
+              </>
             )}
 
             {header && (

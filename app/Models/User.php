@@ -16,7 +16,6 @@ class User extends Authenticatable
         'empresa_id',
         'sucursal_id',
         'email',
-        'nombre',
         'password_hash',
         'rol_principal',
         'activo'
@@ -26,6 +25,28 @@ class User extends Authenticatable
         'password_hash',
         'remember_token',
     ];
+
+    // Authentication
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
+    // Laravel expects 'password' attribute, map to password_hash
+    public function getPasswordAttribute()
+    {
+        return $this->password_hash;
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password_hash'] = bcrypt($value);
+    }
 
     protected $casts = [
         'activo' => 'boolean',
@@ -44,10 +65,15 @@ class User extends Authenticatable
         return $this->belongsTo(Sucursal::class);
     }
 
-    // Authentication
-    public function getAuthPassword()
+    // Method to get accessible companies for multi-tenant support
+    public function empresasAccesibles()
     {
-        return $this->password_hash;
+        // For now, return the user's assigned company
+        // In the future, this could be expanded for multi-company access
+        if ($this->empresa_id) {
+            return Empresa::where('id', $this->empresa_id)->where('activa', true);
+        }
+        return Empresa::whereRaw('1 = 0'); // Return empty query
     }
 
     // Role helpers

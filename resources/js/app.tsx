@@ -5,6 +5,16 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
+import { route } from 'ziggy-js';
+
+// Make route function available globally
+declare global {
+  interface Window {
+    route: typeof route;
+  }
+}
+
+window.route = route;
 
 const appName = import.meta.env.VITE_APP_NAME || 'SmartKet v4';
 

@@ -15,20 +15,19 @@ async function resolvePageComponent(path, pages) {
   }
   throw new Error(`Page not found: ${path}`);
 }
-const appName = "Laravel";
-createInertiaApp({
-  title: (title) => `${title} - ${appName}`,
-  resolve: (name) => resolvePageComponent(
-    `./Pages/${name}.tsx`,
-    /* @__PURE__ */ Object.assign({ "./Pages/Dashboard.tsx": () => import("./assets/Dashboard-OTO4DwuT.js") })
-  ),
-  setup: ({ App, props }) => {
-    return ReactDOMServer.renderToString(
-      /* @__PURE__ */ jsx(StrictMode, { children: /* @__PURE__ */ jsx(App, { ...props }) })
-    );
-  },
-  progress: {
-    color: "#4F46E5",
-    showSpinner: true
-  }
-});
+const appName = "SmartKet_v4_Local";
+function render(page) {
+  return createInertiaApp({
+    page,
+    render: ReactDOMServer.renderToString,
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) => resolvePageComponent(
+      `./Pages/${name}.tsx`,
+      /* @__PURE__ */ Object.assign({ "./Pages/Auth/Login.tsx": () => import("./assets/Login-G2480SHj.js"), "./Pages/Auth/Register.tsx": () => import("./assets/Register-Bg8_POC9.js"), "./Pages/Clients.tsx": () => import("./assets/Clients--t5WTafx.js"), "./Pages/Dashboard.tsx": () => import("./assets/Dashboard-CO8CO0US.js"), "./Pages/Inventory.tsx": () => import("./assets/Inventory-Dalvrv4y.js"), "./Pages/Inventory/Movements.tsx": () => import("./assets/Movements-BSu0Xw2P.js"), "./Pages/POS.tsx": () => import("./assets/POS-Bj4Fq30W.js"), "./Pages/Placeholder.tsx": () => import("./assets/Placeholder-GyOBfcWG.js"), "./Pages/Products.tsx": () => import("./assets/Products-gcz6XsIY.js"), "./Pages/Public/Landing.tsx": () => import("./assets/Landing-BJFAWIDS.js"), "./Pages/Reports.tsx": () => import("./assets/Reports-CIU24TQT.js"), "./Pages/Sales.tsx": () => import("./assets/Sales-DcjMZFoK.js") })
+    ),
+    setup: ({ App, props }) => /* @__PURE__ */ jsx(StrictMode, { children: /* @__PURE__ */ jsx(App, { ...props }) })
+  });
+}
+export {
+  render as default
+};

@@ -42,20 +42,63 @@ class HandleInertiaRequests extends Middleware
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
-                    'tenant_id' => $request->user()->tenant_id,
-                ] : null,
-                'tenant' => $request->user() && $request->user()->tenant ? [
-                    'id' => $request->user()->tenant->id,
-                    'name' => $request->user()->tenant->name,
-                    'subdomain' => $request->user()->tenant->subdomain,
+                    'email_verified_at' => $request->user()->email_verified_at,
+                    'empresa_id' => $request->user()->empresa_id,
+                    'sucursal_id' => $request->user()->sucursal_id,
+                    'role' => $request->user()->role ?? 'user',
                 ] : null,
             ],
+            'empresa' => function () use ($request) {
+                if (!$request->user()) return null;
+                
+                $tenantService = app('App\Services\TenantService');
+                $empresa = $tenantService->getEmpresa();
+                return $empresa ? [
+                    'id' => $empresa->id,
+                    'nombre' => $empresa->nombre,
+                    'logo' => $empresa->logo,
+                ] : null;
+            },
+            'sucursal' => function () use ($request) {
+                if (!$request->user()) return null;
+                
+                $tenantService = app('App\Services\TenantService');
+                $sucursal = $tenantService->getSucursal();
+                return $sucursal ? [
+                    'id' => $sucursal->id,
+                    'nombre' => $sucursal->nombre,
+                ] : null;
+            },
+            'empresas_disponibles' => function () use ($request) {
+                if (!$request->user()) return [];
+                
+                return $request->user()->empresasAccesibles()
+                    ->get(['id', 'nombre', 'logo'])
+                    ->toArray();
+            },
+            'sucursales_disponibles' => function () use ($request) {
+                if (!$request->user()) return [];
+                
+                $tenantService = app('App\Services\TenantService');
+                $empresa = $tenantService->getEmpresa();
+                
+                if (!$empresa) return [];
+                
+                return $empresa->sucursales()
+                    ->where('activa', true)
+                    ->get(['id', 'nombre'])
+                    ->toArray();
+            },
             'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-                'warning' => session('warning'),
-                'info' => session('info'),
+                'message' => fn () => $request->session()->get('message'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'warning' => fn () => $request->session()->get('warning'),
+                'status' => fn () => $request->session()->get('status'),
             ],
+            'errors' => fn () => $request->session()->get('errors') 
+                ? $request->session()->get('errors')->getBag('default')->getMessages()
+                : [],
         ];
     }
 }
