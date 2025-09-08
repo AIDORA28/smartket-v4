@@ -6,7 +6,9 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientControllerSimple;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
@@ -34,8 +36,8 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     });
     
     // Módulo de Productos e Inventario
-    // Productos con React + Inertia
-    Route::get('productos', [ProductController::class, 'index'])->name('productos.index');
+    // Productos con React + Inertia - GESTIÓN COMPLETA CON DATOS REALES
+    Route::get('productos', [ProductManagementController::class, 'index'])->name('productos.index');
     Route::post('productos', [ProductController::class, 'store'])->name('productos.store');
     Route::put('productos/{id}', [ProductController::class, 'update'])->name('productos.update');
     Route::delete('productos/{id}', [ProductController::class, 'destroy'])->name('productos.destroy');
@@ -68,7 +70,7 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     });
     
     Route::prefix('clientes')->name('clientes.')->group(function () {
-        Route::get('/', [ClientController::class, 'index'])->name('index');
+        Route::get('/', [ClientControllerSimple::class, 'index'])->name('index');
         Route::post('/', [ClientController::class, 'store'])->name('store');
         Route::get('/{id}', [ClientController::class, 'show'])->name('show');
         Route::put('/{id}', [ClientController::class, 'update'])->name('update');

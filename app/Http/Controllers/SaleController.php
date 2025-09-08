@@ -33,7 +33,7 @@ class SaleController extends Controller
         }
 
         $query = Venta::where('empresa_id', $empresa->id)
-            ->with(['cliente', 'ventaDetalles.producto']);
+            ->with(['cliente', 'detalles.producto']);
 
         // Filtros
         if ($request->filled('search')) {
@@ -111,7 +111,7 @@ class SaleController extends Controller
             ->where('id', $id)
             ->with([
                 'cliente',
-                'ventaDetalles.producto.categoria',
+                'detalles.producto.categoria',
                 'user'
             ])
             ->firstOrFail();
@@ -129,7 +129,7 @@ class SaleController extends Controller
             ->where('id', $id)
             ->with([
                 'cliente',
-                'ventaDetalles.producto'
+                'detalles.producto'
             ])
             ->firstOrFail();
 
@@ -206,7 +206,7 @@ class SaleController extends Controller
         try {
             // Restaurar stock de los items anteriores si la venta estaba completada
             if ($sale->estado === 'completed') {
-                foreach ($sale->ventaDetalles as $detalle) {
+                foreach ($sale->detalles as $detalle) {
                     $this->restoreProductStock($detalle->producto, $detalle->cantidad);
                 }
             }
@@ -224,7 +224,7 @@ class SaleController extends Controller
             ]);
 
             // Eliminar detalles anteriores
-            $sale->ventaDetalles()->delete();
+            $sale->detalles()->delete();
 
             // Crear nuevos detalles
             foreach ($items as $item) {
@@ -272,7 +272,7 @@ class SaleController extends Controller
         DB::beginTransaction();
         try {
             // Eliminar detalles
-            $sale->ventaDetalles()->delete();
+            $sale->detalles()->delete();
             
             // Eliminar venta
             $sale->delete();
@@ -304,7 +304,7 @@ class SaleController extends Controller
         try {
             // Si la venta estaba completada, restaurar stock
             if ($sale->estado === 'completed') {
-                foreach ($sale->ventaDetalles as $detalle) {
+                foreach ($sale->detalles as $detalle) {
                     $this->restoreProductStock($detalle->producto, $detalle->cantidad);
                 }
             }
@@ -327,7 +327,7 @@ class SaleController extends Controller
         
         $sale = Venta::where('empresa_id', $empresa->id)
             ->where('id', $id)
-            ->with('ventaDetalles.producto')
+            ->with('detalles.producto')
             ->firstOrFail();
 
         if ($sale->estado !== 'pending') {
@@ -337,7 +337,7 @@ class SaleController extends Controller
         DB::beginTransaction();
         try {
             // Verificar stock disponible
-            foreach ($sale->ventaDetalles as $detalle) {
+            foreach ($sale->detalles as $detalle) {
                 $stockDisponible = $detalle->producto->stocks->sum('cantidad_actual') ?? 0;
                 if ($stockDisponible < $detalle->cantidad) {
                     throw new \Exception("Stock insuficiente para el producto: {$detalle->producto->nombre}");
@@ -345,7 +345,7 @@ class SaleController extends Controller
             }
 
             // Actualizar stock de cada producto
-            foreach ($sale->ventaDetalles as $detalle) {
+            foreach ($sale->detalles as $detalle) {
                 $this->updateProductStock($detalle->producto, $detalle->cantidad);
             }
 

@@ -8,7 +8,7 @@
     "/build/assets/Button-DrUMbt6l.js"
   ],
   "resources/js/Components/StatsCard.tsx": [
-    "/build/assets/Inventory-Dalvrv4y.js"
+    "/build/assets/Inventory-BA0BPlPE.js"
   ],
   "resources/js/Components/auth/AuthLayout.tsx": [
     "/build/assets/AuthNavigation-CdKTQkGa.js"
@@ -36,6 +36,33 @@
   ],
   "resources/js/Components/auth/StatusMessage.tsx": [
     "/build/assets/AuthNavigation-CdKTQkGa.js"
+  ],
+  "resources/js/Components/dashboard/DashboardFooter.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/DashboardHeader.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/DashboardKPIs.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/InventoryOverview.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/LowStockAlerts.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/QuickActions.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/RecentActivity.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/RecentSales.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
+  ],
+  "resources/js/Components/dashboard/TopProducts.tsx": [
+    "/build/assets/Dashboard-jwGwlrQ2.js"
   ],
   "resources/js/Components/landing/CTASection.tsx": [
     "/build/assets/Landing-BJFAWIDS.js"
@@ -74,16 +101,16 @@
     "/build/assets/Landing-BJFAWIDS.js"
   ],
   "resources/js/Components/ui/Button.tsx": [
-    "/build/assets/Card-DoF5IT7l.js"
+    "/build/assets/Card-BddCNI4j.js"
   ],
   "resources/js/Components/ui/Card.tsx": [
-    "/build/assets/Card-DoF5IT7l.js"
+    "/build/assets/Card-BddCNI4j.js"
   ],
   "resources/js/Components/ui/StatsCard.tsx": [
     "/build/assets/StatsCard-DHQ101IL.js"
   ],
   "resources/js/Layouts/AuthenticatedLayout.tsx": [
-    "/build/assets/AuthenticatedLayout-BfjI-KKz.js"
+    "/build/assets/AuthenticatedLayout-D1McMawl.js"
   ],
   "resources/js/Pages/Auth/Login.tsx": [
     "/build/assets/Login-G2480SHj.js"
@@ -92,34 +119,49 @@
     "/build/assets/Register-Bg8_POC9.js"
   ],
   "resources/js/Pages/Clients.tsx": [
-    "/build/assets/Clients--t5WTafx.js"
+    "/build/assets/Clients-Cfb3FeMA.js"
+  ],
+  "resources/js/Pages/Clients_Simple.tsx": [
+    "/build/assets/Clients_Simple-DSeV9U8e.js"
+  ],
+  "resources/js/Pages/Dashboard-old.tsx": [
+    "/build/assets/Dashboard-old-KPcnJFlC.js"
   ],
   "resources/js/Pages/Dashboard.tsx": [
-    "/build/assets/Dashboard-CO8CO0US.js"
+    "/build/assets/Dashboard-jwGwlrQ2.js"
   ],
   "resources/js/Pages/Inventory.tsx": [
-    "/build/assets/Inventory-Dalvrv4y.js"
+    "/build/assets/Inventory-BA0BPlPE.js"
   ],
   "resources/js/Pages/Inventory/Movements.tsx": [
-    "/build/assets/Movements-BSu0Xw2P.js"
+    "/build/assets/Movements-BOl5aaS0.js"
   ],
   "resources/js/Pages/POS.tsx": [
-    "/build/assets/POS-Bj4Fq30W.js"
+    "/build/assets/POS-CO3Yycyl.js"
   ],
   "resources/js/Pages/Placeholder.tsx": [
-    "/build/assets/Placeholder-GyOBfcWG.js"
+    "/build/assets/Placeholder-BaR1M6ZF.js"
   ],
   "resources/js/Pages/Products.tsx": [
-    "/build/assets/Products-gcz6XsIY.js"
+    "/build/assets/Products-l0sNRNKZ.js"
+  ],
+  "resources/js/Pages/Products/Brands.tsx": [
+    "/build/assets/Brands-De8BHy4W.js"
+  ],
+  "resources/js/Pages/Products/Categories.tsx": [
+    "/build/assets/Categories-BeAw8OU0.js"
+  ],
+  "resources/js/Pages/Products/Units.tsx": [
+    "/build/assets/Units-CqX7-SNf.js"
   ],
   "resources/js/Pages/Public/Landing.tsx": [
     "/build/assets/Landing-BJFAWIDS.js"
   ],
   "resources/js/Pages/Reports.tsx": [
-    "/build/assets/Reports-CIU24TQT.js"
+    "/build/assets/Reports-CzTgF9U0.js"
   ],
   "resources/js/Pages/Sales.tsx": [
-    "/build/assets/Sales-DcjMZFoK.js"
+    "/build/assets/Sales-BKOA9RuO.js"
   ],
   "resources/js/bootstrap.js": [],
   "resources/js/ssr.tsx": []
