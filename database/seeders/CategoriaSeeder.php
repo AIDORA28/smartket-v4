@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Categoria;
-use App\Models\Empresa;
+use App\Models\Inventory\Categoria;
+use App\Models\Core\Empresa;
 
 class CategoriaSeeder extends Seeder
 {
@@ -72,3 +72,4 @@ class CategoriaSeeder extends Seeder
         }
     }
 }
+

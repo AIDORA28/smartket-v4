@@ -18,3 +18,4 @@ class FeatureGuard
         return $next($request);
     }
 }
+

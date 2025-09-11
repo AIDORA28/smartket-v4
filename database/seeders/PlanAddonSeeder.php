@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\PlanAddon;
+use App\Models\Core\PlanAddon;
 
 class PlanAddonSeeder extends Seeder
 {
@@ -193,3 +193,4 @@ class PlanAddonSeeder extends Seeder
         $this->command->info('Add-ons creados exitosamente');
     }
 }
+

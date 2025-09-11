@@ -1,6 +1,9 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '../Layouts/AuthenticatedLayout';
+// Modular Components
+import MetricCard from '@/Components/core/shared/MetricCard';
+import ActionCard from '@/Components/core/shared/ActionCard';
 
 interface ClientData {
   id: number;
@@ -83,55 +86,39 @@ export default function Clients({
       <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           
-          {/* Estadísticas */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white p-4 rounded-lg shadow border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Clientes</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats?.total_clientes || 0}</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-600 text-xl">👤</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg shadow border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Activos</p>
-                  <p className="text-2xl font-bold text-green-900">{stats?.clientes_activos || 0}</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <span className="text-green-600 text-xl">✅</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg shadow border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Con Crédito</p>
-                  <p className="text-2xl font-bold text-purple-900">{stats?.con_credito || 0}</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <span className="text-purple-600 text-xl">💳</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 rounded-lg shadow border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Crédito Pendiente</p>
-                  <p className="text-2xl font-bold text-red-900">S/. {stats?.credito_pendiente?.toFixed(2) || '0.00'}</p>
-                </div>
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                  <span className="text-red-600 text-xl">💰</span>
-                </div>
-              </div>
-            </div>
+          {/* Estadísticas Mejoradas con MetricCard */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <MetricCard
+              title="👤 Total Clientes"
+              value={stats?.total_clientes?.toString() || '0'}
+              emoji="👤"
+              color="blue"
+              subtitle="clientes registrados"
+            />
+            
+            <MetricCard
+              title="✅ Clientes Activos"
+              value={stats?.clientes_activos?.toString() || '0'}
+              emoji="✅"
+              color="green"
+              subtitle="activos en sistema"
+            />
+            
+            <MetricCard
+              title="💳 Con Crédito"
+              value={stats?.con_credito?.toString() || '0'}
+              emoji="💳"
+              color="purple"
+              subtitle="clientes con crédito"
+            />
+            
+            <MetricCard
+              title="💰 Crédito Pendiente"
+              value={`S/. ${stats?.credito_pendiente?.toFixed(2) || '0.00'}`}
+              emoji="💰"
+              color="red"
+              subtitle="por cobrar"
+            />
           </div>
 
           {/* Lista de Clientes */}

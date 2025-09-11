@@ -8,9 +8,9 @@ use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use App\Services\TenantService;
-use App\Models\Venta;
-use App\Models\VentaDetalle;
-use App\Models\Producto;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaDetalle;
+use App\Models\Inventory\Producto;
 use App\Models\Cliente;
 use Carbon\Carbon;
 
@@ -383,3 +383,4 @@ class ReportController extends Controller
         ]);
     }
 }
+

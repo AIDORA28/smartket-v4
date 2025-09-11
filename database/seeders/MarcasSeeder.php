@@ -93,3 +93,4 @@ class MarcasSeeder extends Seeder
         }
     }
 }
+

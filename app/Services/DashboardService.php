@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\Venta;
-use App\Models\Producto;
+use App\Models\Sales\Venta;
+use App\Models\Inventory\Producto;
 use App\Models\Cliente;
 use App\Models\CajaSesion;
 use App\Models\Compra;
 use App\Models\Lote;
-use App\Models\ProductoStock;
-use App\Models\InventarioMovimiento;
+use App\Models\Inventory\ProductoStock;
+use App\Models\Inventory\InventarioMovimiento;
 use App\Models\AnalyticsEvento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -491,3 +491,4 @@ class DashboardService
         Cache::forget($pattern);
     }
 }
+

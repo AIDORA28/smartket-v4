@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Lote;
-use App\Models\Producto;
-use App\Models\ProductoStock;
+use App\Models\Inventory\Producto;
+use App\Models\Inventory\ProductoStock;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
@@ -187,3 +187,4 @@ class VencimientoService
             ]) > 0;
     }
 }
+

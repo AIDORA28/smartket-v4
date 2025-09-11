@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Proveedor;
-use App\Models\Empresa;
+use App\Models\Core\Empresa;
 
 class ProveedorSeeder extends Seeder
 {
@@ -89,3 +89,4 @@ class ProveedorSeeder extends Seeder
         $this->command->info('   - 4 proveedores creados para la empresa: ' . $empresa->nombre);
     }
 }
+

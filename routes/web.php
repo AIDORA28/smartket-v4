@@ -2,16 +2,20 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TenantController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\Inventory\CategoriaController;
+use App\Http\Controllers\Core\UserWebController;
+use App\Http\Controllers\Core\CompanySettingsController;
+use App\Http\Controllers\Core\OrganizationBrandingController;
+use App\Http\Controllers\Core\CompanyAnalyticsController;
+use App\Http\Controllers\Core\BranchManagementController;
+use App\Http\Controllers\Core\BranchTransferController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientControllerSimple;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SaleController;
+use App\Http\Controllers\Sales\SaleController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\PlaceholderController;
@@ -36,12 +40,8 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
     });
     
     // Módulo de Productos e Inventario
-    // Productos con React + Inertia - GESTIÓN COMPLETA CON DATOS REALES
-    Route::get('productos', [ProductManagementController::class, 'index'])->name('productos.index');
-    Route::post('productos', [ProductController::class, 'store'])->name('productos.store');
-    Route::put('productos/{id}', [ProductController::class, 'update'])->name('productos.update');
-    Route::delete('productos/{id}', [ProductController::class, 'destroy'])->name('productos.destroy');
-    Route::post('productos/{producto}/ajustar-stock', [ProductoController::class, 'ajustarStock'])->name('productos.ajustar-stock');
+    Route::get('productos', [ProductController::class, 'index'])->name('productos.index');
+    Route::get('productos/{id}', [ProductController::class, 'show'])->name('productos.show');
     Route::resource('categorias', CategoriaController::class)->except(['show']);
     
     Route::prefix('inventario')->name('inventario.')->group(function () {
@@ -77,17 +77,23 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
     });
     
-    // Módulo de Caja
-    Route::prefix('caja')->name('caja.')->group(function () {
+    // Módulo de Caja y Sesiones
+    Route::prefix('cajas')->name('cajas.')->group(function () {
         Route::get('/', [PlaceholderController::class, 'show'])
-            ->defaults('module', 'caja')
+            ->defaults('module', 'cajas')
             ->name('index');
-        Route::post('/abrir', function () {
-            return redirect()->back()->with('success', 'Caja abierta exitosamente');
-        })->name('abrir');
-        Route::post('/cerrar', function () {
-            return redirect()->back()->with('success', 'Caja cerrada exitosamente');
-        })->name('cerrar');
+        Route::post('/abrir-sesion', function () {
+            return redirect()->back()->with('success', 'Sesión de caja abierta exitosamente');
+        })->name('abrir-sesion');
+        Route::post('/cerrar-sesion', function () {
+            return redirect()->back()->with('success', 'Sesión de caja cerrada exitosamente');
+        })->name('cerrar-sesion');
+        Route::get('/movimientos', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'cajas')
+            ->name('movimientos');
+        Route::get('/arqueo', [PlaceholderController::class, 'show'])
+            ->defaults('module', 'cajas')
+            ->name('arqueo');
     });
     
     // Módulo de Compras
@@ -120,6 +126,12 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
         Route::get('/trazabilidad', [PlaceholderController::class, 'show'])
             ->defaults('module', 'lotes')
             ->name('trazabilidad');
+        Route::post('/', function () {
+            return redirect()->back()->with('success', 'Lote creado exitosamente');
+        })->name('store');
+        Route::put('/{id}', function () {
+            return redirect()->back()->with('success', 'Lote actualizado exitosamente');
+        })->name('update');
     });
     
     // Módulo de Reportes y Analytics con React + Inertia
@@ -128,6 +140,67 @@ Route::middleware(['auth', 'verified', 'empresa.scope'])->group(function () {
         Route::post('/export', [ReportController::class, 'export'])->name('export');
     });
     
+    // Módulo Core - User Management
+    Route::prefix('core')->name('core.')->group(function () {
+        // Phase 2: User Management (Completed)
+        Route::resource('users', UserWebController::class);
+        Route::post('/switch-empresa', [TenantController::class, 'switchEmpresa'])->name('switch-empresa');
+        Route::post('/switch-sucursal', [TenantController::class, 'switchSucursal'])->name('switch-sucursal');
+        
+        // Phase 3: Company & Branch Management
+        Route::prefix('company')->name('company.')->group(function () {
+            // Company Settings Management
+            Route::get('/settings', [CompanySettingsController::class, 'index'])->name('settings.index');
+            Route::get('/settings/create', [CompanySettingsController::class, 'create'])->name('settings.create');
+            Route::post('/settings', [CompanySettingsController::class, 'store'])->name('settings.store');
+            Route::get('/settings/{section}', [CompanySettingsController::class, 'show'])->name('settings.show');
+            Route::get('/settings/{section}/edit', [CompanySettingsController::class, 'edit'])->name('settings.edit');
+            Route::put('/settings/{section}', [CompanySettingsController::class, 'update'])->name('settings.update');
+            Route::delete('/settings/{section}', [CompanySettingsController::class, 'destroy'])->name('settings.destroy');
+            
+            // Organization Branding Management
+            Route::get('/branding', [OrganizationBrandingController::class, 'index'])->name('branding.index');
+            Route::get('/branding/create', [OrganizationBrandingController::class, 'create'])->name('branding.create');
+            Route::post('/branding', [OrganizationBrandingController::class, 'store'])->name('branding.store');
+            Route::get('/branding/edit', [OrganizationBrandingController::class, 'edit'])->name('branding.edit');
+            Route::put('/branding', [OrganizationBrandingController::class, 'update'])->name('branding.update');
+            Route::delete('/branding', [OrganizationBrandingController::class, 'destroy'])->name('branding.destroy');
+            
+            // Company Analytics
+            Route::get('/analytics', [CompanyAnalyticsController::class, 'index'])->name('analytics.index');
+            Route::get('/analytics/refresh', [CompanyAnalyticsController::class, 'refresh'])->name('analytics.refresh');
+            Route::get('/analytics/export', [CompanyAnalyticsController::class, 'export'])->name('analytics.export');
+        });
+        
+        Route::prefix('branches')->name('branches.')->group(function () {
+            // Branch Management
+            Route::get('/', [BranchManagementController::class, 'index'])->name('index');
+            Route::get('/create', [BranchManagementController::class, 'create'])->name('create');
+            Route::post('/', [BranchManagementController::class, 'store'])->name('store');
+            Route::get('/{sucursal}', [BranchManagementController::class, 'show'])->name('show');
+            Route::get('/{sucursal}/edit', [BranchManagementController::class, 'edit'])->name('edit');
+            Route::put('/{sucursal}', [BranchManagementController::class, 'update'])->name('update');
+            Route::delete('/{sucursal}', [BranchManagementController::class, 'destroy'])->name('destroy');
+            
+            // Branch Settings
+            Route::get('/{sucursal}/settings', [BranchManagementController::class, 'settings'])->name('settings');
+            Route::put('/{sucursal}/settings', [BranchManagementController::class, 'updateSettings'])->name('settings.update');
+            
+            // Branch Performance
+            Route::get('/{sucursal}/performance', [BranchManagementController::class, 'performance'])->name('performance');
+            Route::get('/{sucursal}/performance/refresh', [BranchManagementController::class, 'refreshPerformance'])->name('performance.refresh');
+            
+            // Branch Transfers
+            Route::get('/transfers', [BranchTransferController::class, 'index'])->name('transfers.index');
+            Route::get('/transfers/create', [BranchTransferController::class, 'create'])->name('transfers.create');
+            Route::post('/transfers', [BranchTransferController::class, 'store'])->name('transfers.store');
+            Route::get('/transfers/{transfer}', [BranchTransferController::class, 'show'])->name('transfers.show');
+            Route::put('/transfers/{transfer}/send', [BranchTransferController::class, 'send'])->name('transfers.send');
+            Route::put('/transfers/{transfer}/receive', [BranchTransferController::class, 'receive'])->name('transfers.receive');
+            Route::put('/transfers/{transfer}/cancel', [BranchTransferController::class, 'cancel'])->name('transfers.cancel');
+        });
+    });
+
     // Módulo de Configuraciones con React + Inertia
     Route::prefix('configuraciones')->name('configuraciones.')->group(function () {
         Route::get('/', [ConfigurationController::class, 'index'])->name('index');
@@ -172,3 +245,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

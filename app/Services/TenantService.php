@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Empresa;
-use App\Models\Sucursal;
+use App\Models\Core\Empresa;
+use App\Models\Core\Sucursal;
 use Illuminate\Support\Facades\Auth;
 
 class TenantService
@@ -136,3 +136,4 @@ class TenantService
         session()->forget(['empresa_id', 'sucursal_id']);
     }
 }
+

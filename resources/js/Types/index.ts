@@ -4,9 +4,13 @@ export interface User {
   name: string;
   email: string;
   email_verified_at?: string;
-  tenant_id: number;
-  roles?: Role[];
-  permissions?: Permission[];
+  empresa_id: number;
+  sucursal_id?: number;
+  rol_principal: string;
+  activo: boolean;
+  last_login_at?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Tenant {

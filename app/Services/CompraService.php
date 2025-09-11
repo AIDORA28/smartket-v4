@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Compra;
 use App\Models\CompraItem;
-use App\Models\ProductoStock;
-use App\Models\InventarioMovimiento;
+use App\Models\Inventory\ProductoStock;
+use App\Models\Inventory\InventarioMovimiento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -159,3 +159,4 @@ class CompraService
         return $compra->anular($motivo);
     }
 }
+

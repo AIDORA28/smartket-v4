@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Plan;
-use App\Models\Empresa;
-use App\Models\Rubro;
-use App\Models\Sucursal;
-use App\Models\User;
-use App\Models\FeatureFlag;
+use App\Models\Core\Plan;
+use App\Models\Core\Empresa;
+use App\Models\Core\Rubro;
+use App\Models\Core\Sucursal;
+use App\Models\Core\User;
+use App\Models\Core\FeatureFlag;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -173,3 +173,4 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
+

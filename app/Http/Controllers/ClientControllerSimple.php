@@ -71,3 +71,4 @@ class ClientControllerSimple extends Controller
         ]);
     }
 }
+

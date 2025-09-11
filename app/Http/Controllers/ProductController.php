@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Services\TenantService;
-use App\Models\Producto;
-use App\Models\Categoria;
-use App\Models\Marca;
-use App\Models\UnidadMedida;
-use App\Models\ProductoStock;
+use App\Models\Inventory\Producto;
+use App\Models\Inventory\Categoria;
+use App\Models\Inventory\Marca;
+use App\Models\Inventory\UnidadMedida;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -21,110 +21,158 @@ class ProductController extends Controller
         $this->tenantService = $tenantService;
     }
 
-    public function store(Request $request)
+    /**
+     * 📦 Lista principal de productos con datos reales
+     */
+    public function index(Request $request)
     {
         try {
-            $empresa = $this->tenantService->getEmpresa();
+            $user = Auth::user();
             
-            if (!$empresa) {
-                return back()->withErrors(['error' => 'No hay empresa configurada']);
+            // Verificación de autenticación
+            if (!$user) {
+                return redirect()->route('login');
             }
-
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255',
-                'descripcion' => 'nullable|string',
-                'codigo_barras' => 'nullable|string|unique:productos,codigo_barras',
-                'categoria_id' => 'required|exists:categorias,id',
-                'marca_id' => 'required|exists:marcas,id',
-                'unidad_medida_id' => 'required|exists:unidades_medida,id',
-                'precio_compra' => 'nullable|numeric|min:0',
-                'precio_venta' => 'required|numeric|min:0',
-                'stock_minimo' => 'nullable|integer|min:0',
-                'stock_inicial' => 'nullable|integer|min:0',
-                'activo' => 'boolean',
+            
+            // Obtener empresa_id del usuario autenticado
+            $empresaId = $user->empresa_id ?? 1;
+            
+            // Cargar productos con relaciones - con manejo de errores
+            $productos = Producto::with(['categoria', 'marca', 'unidadMedida'])
+                ->forEmpresa($empresaId)
+                ->active()
+                ->paginate(15);
+            
+            // Si no hay productos para esta empresa, mostrar mensaje informativo
+            if ($productos->isEmpty()) {
+                Log::info("No se encontraron productos para empresa_id: {$empresaId}");
+            }
+            
+            // Respuesta con datos reales
+            return Inertia::render('Products', [
+                'auth' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'rol_principal' => $user->rol_principal ?? 'cajero',
+                    ]
+                ],
+                'productos' => [
+                    'data' => $productos->items(),
+                    'current_page' => $productos->currentPage(),
+                    'last_page' => $productos->lastPage(),
+                    'per_page' => $productos->perPage(),
+                    'total' => $productos->total(),
+                ],
+                'categorias' => Categoria::where('empresa_id', $empresaId)->active()->get(),
+                'marcas' => Marca::where('empresa_id', $empresaId)->activas()->get(),
+                'unidades' => UnidadMedida::where('empresa_id', $empresaId)->activas()->get(),
+                'stats' => [
+                    'total_productos' => Producto::forEmpresa($empresaId)->count(),
+                    'total_categorias' => Categoria::where('empresa_id', $empresaId)->count(),
+                    'total_marcas' => Marca::where('empresa_id', $empresaId)->count(),
+                    'total_unidades' => UnidadMedida::where('empresa_id', $empresaId)->count(),
+                    'productos_activos' => Producto::forEmpresa($empresaId)->active()->count(),
+                    'stock_bajo' => Producto::forEmpresa($empresaId)->conStockBajo()->count(),
+                ],
+                'empresa' => [
+                    'id' => $user->empresa_id ?? 1,
+                    'nombre' => 'SmartKet'
+                ]
             ]);
-
-            // Agregar empresa_id
-            $validated['empresa_id'] = $empresa->id;
-            $validated['stock_minimo'] = $validated['stock_minimo'] ?? 0;
-
-            DB::beginTransaction();
-
-            // Crear el producto
-            $producto = Producto::create($validated);
-
-            // Crear stock inicial si se especifica
-            if (isset($validated['stock_inicial']) && $validated['stock_inicial'] > 0) {
-                ProductoStock::create([
-                    'empresa_id' => $empresa->id,
-                    'producto_id' => $producto->id,
-                    'sucursal_id' => $this->tenantService->getSucursal()?->id ?? 1,
-                    'cantidad_actual' => $validated['stock_inicial'],
-                    'cantidad_reservada' => 0,
-                    'costo_promedio' => $validated['precio_compra'] ?? 0,
-                ]);
-            }
-
-            DB::commit();
-
-            return back()->with('success', 'Producto creado exitosamente');
-
+            
         } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Error al crear producto: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Error al crear producto: ' . $e->getMessage()]);
+            // En caso de error, devolver estructura vacía pero correcta
+            return Inertia::render('Products', [
+                'auth' => [
+                    'user' => [
+                        'id' => 0,
+                        'name' => 'Usuario',
+                        'email' => '',
+                        'rol_principal' => 'cajero',
+                    ]
+                ],
+                'productos' => [
+                    'data' => [],
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'per_page' => 15,
+                    'total' => 0,
+                ],
+                'categorias' => [],
+                'marcas' => [],
+                'unidades' => [],
+                'stats' => [
+                    'total_productos' => 0,
+                    'total_categorias' => 0,
+                    'total_marcas' => 0,
+                    'total_unidades' => 0,
+                    'productos_activos' => 0,
+                    'stock_bajo' => 0,
+                ],
+                'empresa' => [
+                    'id' => 1,
+                    'nombre' => 'SmartKet'
+                ],
+                'error' => 'Error: ' . $e->getMessage()
+            ]);
         }
     }
 
-    public function update(Request $request, $id)
+    /**
+     * 👁️ Mostrar detalle de un producto específico
+     */
+    public function show(Request $request, $id)
     {
         try {
-            $empresa = $this->tenantService->getEmpresa();
+            $user = Auth::user();
             
-            $producto = Producto::where('empresa_id', $empresa->id)->findOrFail($id);
-
-            $validated = $request->validate([
-                'nombre' => 'required|string|max:255',
-                'descripcion' => 'nullable|string',
-                'codigo_barras' => 'nullable|string|unique:productos,codigo_barras,' . $id,
-                'categoria_id' => 'required|exists:categorias,id',
-                'marca_id' => 'required|exists:marcas,id',
-                'unidad_medida_id' => 'required|exists:unidades_medida,id',
-                'precio_compra' => 'nullable|numeric|min:0',
-                'precio_venta' => 'required|numeric|min:0',
-                'stock_minimo' => 'nullable|integer|min:0',
-                'activo' => 'boolean',
-            ]);
-
-            $producto->update($validated);
-
-            return back()->with('success', 'Producto actualizado exitosamente');
-
-        } catch (\Exception $e) {
-            Log::error('Error al actualizar producto: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Error al actualizar producto: ' . $e->getMessage()]);
-        }
-    }
-
-    public function destroy($id)
-    {
-        try {
-            $empresa = $this->tenantService->getEmpresa();
-            
-            $producto = Producto::where('empresa_id', $empresa->id)->findOrFail($id);
-            
-            // Verificar si tiene ventas asociadas
-            if ($producto->ventaDetalles()->exists()) {
-                return back()->withErrors(['error' => 'No se puede eliminar el producto porque tiene ventas asociadas']);
+            // Verificación de autenticación
+            if (!$user) {
+                return redirect()->route('login');
             }
-
-            $producto->delete();
-
-            return back()->with('success', 'Producto eliminado exitosamente');
-
+            
+            // Obtener empresa_id del usuario autenticado
+            $empresaId = $user->empresa_id ?? 1;
+            
+            // Buscar el producto con todas sus relaciones
+            $producto = Producto::with([
+                'categoria', 
+                'marca', 
+                'unidadMedida', 
+                'stocks.sucursal',
+                'movimientos' => function($query) {
+                    $query->latest()->limit(10);
+                }
+            ])
+            ->forEmpresa($empresaId)
+            ->findOrFail($id);
+            
+            // Calcular stock total
+            $stockTotal = $producto->getStockTotal();
+            
+            return Inertia::render('ProductDetail', [
+                'auth' => [
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'rol_principal' => $user->rol_principal ?? 'cajero',
+                    ]
+                ],
+                'producto' => $producto,
+                'stock_total' => $stockTotal,
+                'empresa' => [
+                    'id' => $user->empresa_id ?? 1,
+                    'nombre' => 'SmartKet'
+                ]
+            ]);
+            
         } catch (\Exception $e) {
-            Log::error('Error al eliminar producto: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Error al eliminar producto: ' . $e->getMessage()]);
+            return redirect()->route('productos.index')
+                ->with('error', 'Producto no encontrado: ' . $e->getMessage());
         }
     }
 }
+

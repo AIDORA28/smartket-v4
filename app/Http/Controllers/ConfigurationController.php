@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Services\TenantService;
-use App\Models\Empresa;
-use App\Models\FeatureFlag;
-use App\Models\User;
-use App\Models\Sucursal;
+use App\Models\Core\Empresa;
+use App\Models\Core\FeatureFlag;
+use App\Models\Core\User;
+use App\Models\Core\Sucursal;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
@@ -312,3 +312,4 @@ class ConfigurationController extends Controller
         ]);
     }
 }
+

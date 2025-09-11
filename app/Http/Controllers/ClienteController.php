@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente;
+use App\Models\CRM\Cliente;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -403,3 +403,4 @@ class ClienteController extends Controller
         }
     }
 }
+

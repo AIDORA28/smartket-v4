@@ -233,3 +233,4 @@ class ClientController extends Controller
             ->with('success', 'Cliente eliminado exitosamente');
     }
 }
+

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Proveedor;
-use App\Models\Empresa;
+use App\Models\Core\Empresa;
 use Illuminate\Database\Eloquent\Collection;
 
 class ProveedorService
@@ -72,3 +72,4 @@ class ProveedorService
         return $proveedor->delete();
     }
 }
+

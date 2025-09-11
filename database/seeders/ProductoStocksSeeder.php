@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Producto;
 use App\Models\ProductoStock;
-use App\Models\Sucursal;
+use App\Models\Core\Sucursal;
 use Illuminate\Database\Seeder;
 
 class ProductoStocksSeeder extends Seeder
@@ -51,3 +51,4 @@ class ProductoStocksSeeder extends Seeder
         $this->command->info('✅ Stocks de productos actualizados correctamente');
     }
 }
+

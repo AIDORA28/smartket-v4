@@ -1,14 +1,16 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use App\Models\Producto;
+use App\Models\Inventory\Producto;
 use App\Models\Cliente;
-use App\Models\Venta;
-use App\Models\VentaDetalle;
-use App\Models\VentaPago;
-use App\Models\ProductoStock;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaDetalle;
+use App\Models\Sales\VentaPago;
+use App\Models\Inventory\ProductoStock;
 use App\Models\Lote;
-use App\Models\Categoria;
+use App\Models\Inventory\Categoria;
 use App\Models\MetodoPago;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -349,3 +351,4 @@ class DashboardDemoSeeder extends Seeder
         echo "   • admin@esperanza.com (password123)\n";
     }
 }
+

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Card from '@/Components/Card';
-import StatsCard from '@/Components/StatsCard';
 import Button from '@/Components/Button';
+// Modular Components
+import MetricCard from '@/Components/core/shared/MetricCard';
+import ActionCard from '@/Components/core/shared/ActionCard';
 import { 
     MagnifyingGlassIcon,
     AdjustmentsHorizontalIcon,
@@ -168,33 +170,35 @@ export default function Inventory({ products, stats, categories, filters, error 
                         <p className="mt-2 text-gray-600">Gestión y control de stock de productos</p>
                     </div>
 
-                    {/* Estadísticas */}
+                    {/* Estadísticas Mejoradas con MetricCard */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <StatsCard
-                            title="Total Productos"
+                        <MetricCard
+                            title="📦 Total Productos"
                             value={stats.total_productos.toString()}
-                            icon={ChartBarIcon}
-                            trend="neutral"
+                            emoji="📦"
+                            color="blue"
+                            subtitle="productos registrados"
                         />
-                        <StatsCard
-                            title="Stock Bajo"
+                        <MetricCard
+                            title="⚠️ Stock Bajo"
                             value={stats.productos_stock_bajo.toString()}
-                            icon={ExclamationTriangleIcon}
-                            trend={stats.productos_stock_bajo > 0 ? "down" : "neutral"}
-                            className={stats.productos_stock_bajo > 0 ? "border-yellow-200" : ""}
+                            emoji="⚠️"
+                            color={stats.productos_stock_bajo > 0 ? "orange" : "green"}
+                            subtitle="productos con stock bajo"
                         />
-                        <StatsCard
-                            title="Sin Stock"
+                        <MetricCard
+                            title="🚫 Sin Stock"
                             value={stats.productos_sin_stock.toString()}
-                            icon={ExclamationTriangleIcon}
-                            trend={stats.productos_sin_stock > 0 ? "down" : "neutral"}
-                            className={stats.productos_sin_stock > 0 ? "border-red-200" : ""}
+                            emoji="🚫"
+                            color={stats.productos_sin_stock > 0 ? "red" : "green"}
+                            subtitle="productos agotados"
                         />
-                        <StatsCard
-                            title="Valor Inventario"
-                            value={`$${stats.valor_inventario.toLocaleString()}`}
-                            icon={ChartBarIcon}
-                            trend="neutral"
+                        <MetricCard
+                            title="💰 Valor Inventario"
+                            value={`S/. ${stats.valor_inventario.toLocaleString()}`}
+                            emoji="💰"
+                            color="green"
+                            subtitle="valor total en stock"
                         />
                     </div>
 
@@ -325,8 +329,8 @@ export default function Inventory({ products, stats, categories, filters, error 
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <div>Costo: ${product.precio_costo}</div>
-                                                <div>Venta: ${product.precio_venta}</div>
+                                                <div>Costo: S/. {product.precio_costo}</div>
+                                                <div>Venta: S/. {product.precio_venta}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${stockStatusColors[product.estado_stock]}`}>
@@ -334,7 +338,7 @@ export default function Inventory({ products, stats, categories, filters, error 
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                ${product.valor_inventario.toLocaleString()}
+                                                S/. {product.valor_inventario.toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <Button

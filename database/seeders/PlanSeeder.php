@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Plan;
+use App\Models\Core\Plan;
 
 class PlanSeeder extends Seeder
 {
@@ -190,3 +190,4 @@ class PlanSeeder extends Seeder
         $this->command->info('Planes creados exitosamente');
     }
 }
+

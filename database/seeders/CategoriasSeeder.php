@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Categoria;
+use App\Models\Inventory\Categoria;
 
 class CategoriasSeeder extends Seeder
 {
@@ -105,3 +105,4 @@ class CategoriasSeeder extends Seeder
         }
     }
 }
+

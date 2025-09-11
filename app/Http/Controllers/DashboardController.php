@@ -12,13 +12,18 @@ use Illuminate\Support\Facades\Log;
 use App\Services\TenantService;
 use App\Services\FeatureFlagService;
 use App\Services\DashboardService;
-use App\Models\Empresa;
-use App\Models\Producto;
-use App\Models\Venta;
-use App\Models\VentaDetalle;
+use App\Models\Core\Empresa;
+use App\Models\Inventory\Producto;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaDetalle;
 use App\Models\Cliente;
 use App\Models\Lote;
-use App\Models\ProductoStock;
+use App\Models\Inventory\ProductoStock;
+// 🔥 NUEVOS IMPORTS PARA TABLAS ADICIONALES
+use App\Models\Compra;
+use App\Models\Proveedor;
+use App\Models\Inventory\InventarioMovimiento;
+use App\Models\AnalyticsEvento;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -66,6 +71,13 @@ class DashboardController extends Controller
             // ✅ NUEVOS DATOS: Resumen de arquitectura real
             $inventoryOverview = $this->getInventoryOverview($empresa->id);
             $recentActivity = $this->getRecentActivity($empresa->id);
+            
+            // 🔥 AGREGADOS: Más datos de la BD
+            $comprasRecientes = $this->getComprasRecientes($empresa->id);
+            $lotesProximosVencer = $this->getLotesProximosVencer($empresa->id);
+            $movimientosInventario = $this->getMovimientosInventarioRecientes($empresa->id);
+            $proveedoresSummary = $this->getProveedoresSummary($empresa->id);
+            $analyticsEvents = $this->getAnalyticsEvents($empresa->id);
 
             // Features disponibles según el plan
             $features = [
@@ -84,6 +96,12 @@ class DashboardController extends Controller
                 'cajaStatus' => $cajaStatus,
                 'inventoryOverview' => $inventoryOverview, // ✅ NUEVO
                 'recentActivity' => $recentActivity, // ✅ NUEVO
+                // 🔥 DATOS ADICIONALES DE TABLAS BD
+                'comprasRecientes' => $comprasRecientes,
+                'lotesProximosVencer' => $lotesProximosVencer,
+                'movimientosInventario' => $movimientosInventario,
+                'proveedoresSummary' => $proveedoresSummary,
+                'analyticsEvents' => $analyticsEvents,
                 'empresa' => [
                     'id' => $empresa->id,
                     'nombre_empresa' => $empresa->nombre_empresa,
@@ -125,6 +143,12 @@ class DashboardController extends Controller
                     'totalUnidades' => 0,
                 ],
                 'recentActivity' => [],
+                // 🔥 DATOS POR DEFECTO ADICIONALES
+                'comprasRecientes' => [],
+                'lotesProximosVencer' => [],
+                'movimientosInventario' => [],
+                'proveedoresSummary' => [],
+                'analyticsEvents' => [],
                 'empresa' => [
                     'id' => 1,
                     'nombre_empresa' => 'SmartKet',
@@ -459,4 +483,175 @@ class DashboardController extends Controller
             return array_slice($activities, 0, 5);
         });
     }
+
+    /**
+     * 🔥 NUEVO: Compras recientes de la empresa
+     */
+    private function getComprasRecientes($empresaId)
+    {
+        return Cache::remember("dashboard_compras_recientes_{$empresaId}", 300, function () use ($empresaId) {
+            return DB::table('compras')
+                ->join('proveedores', 'compras.proveedor_id', '=', 'proveedores.id')
+                ->where('compras.empresa_id', $empresaId)
+                ->where('compras.created_at', '>=', Carbon::now()->subDays(7))
+                ->select('compras.id', 'compras.numero_compra', 'compras.total', 'compras.fecha_compra', 'compras.estado', 'proveedores.nombre as proveedor')
+                ->orderBy('compras.created_at', 'desc')
+                ->limit(5)
+                ->get()
+                ->map(function($compra) {
+                    return [
+                        'id' => $compra->id,
+                        'numero' => $compra->numero_compra,
+                        'proveedor' => $compra->proveedor,
+                        'total' => $compra->total,
+                        'fecha' => Carbon::parse($compra->fecha_compra)->format('d/m H:i'),
+                        'estado' => $compra->estado,
+                        'color' => $compra->estado === 'completada' ? 'green' : 'yellow'
+                    ];
+                })
+                ->toArray();
+        });
+    }
+
+    /**
+     * 🔥 NUEVO: Lotes próximos a vencer
+     */
+    private function getLotesProximosVencer($empresaId)
+    {
+        return Cache::remember("dashboard_lotes_vencer_{$empresaId}", 600, function () use ($empresaId) {
+            return DB::table('lotes')
+                ->join('productos', 'lotes.producto_id', '=', 'productos.id')
+                ->where('productos.empresa_id', $empresaId)
+                ->where('lotes.fecha_vencimiento', '<=', Carbon::now()->addDays(30))
+                ->where('lotes.cantidad_actual', '>', 0)
+                ->select('lotes.id', 'lotes.codigo', 'lotes.fecha_vencimiento', 'lotes.cantidad_actual', 'productos.nombre as producto')
+                ->orderBy('lotes.fecha_vencimiento', 'asc')
+                ->limit(5)
+                ->get()
+                ->map(function($lote) {
+                    $diasParaVencer = Carbon::now()->diffInDays(Carbon::parse($lote->fecha_vencimiento), false);
+                    return [
+                        'id' => $lote->id,
+                        'codigo' => $lote->codigo,
+                        'producto' => $lote->producto,
+                        'fecha_vencimiento' => Carbon::parse($lote->fecha_vencimiento)->format('d/m/Y'),
+                        'cantidad' => $lote->cantidad_actual,
+                        'dias_para_vencer' => $diasParaVencer,
+                        'urgencia' => $diasParaVencer <= 7 ? 'critica' : ($diasParaVencer <= 15 ? 'media' : 'baja'),
+                        'color' => $diasParaVencer <= 7 ? 'red' : ($diasParaVencer <= 15 ? 'yellow' : 'blue')
+                    ];
+                })
+                ->toArray();
+        });
+    }
+
+    /**
+     * 🔥 NUEVO: Movimientos de inventario recientes
+     */
+    private function getMovimientosInventarioRecientes($empresaId)
+    {
+        return Cache::remember("dashboard_movimientos_inventario_{$empresaId}", 300, function () use ($empresaId) {
+            return DB::table('inventario_movimientos')
+                ->join('productos', 'inventario_movimientos.producto_id', '=', 'productos.id')
+                ->where('productos.empresa_id', $empresaId)
+                ->where('inventario_movimientos.created_at', '>=', Carbon::now()->subDays(7))
+                ->select('inventario_movimientos.*', 'productos.nombre as producto')
+                ->orderBy('inventario_movimientos.created_at', 'desc')
+                ->limit(5)
+                ->get()
+                ->map(function($movimiento) {
+                    return [
+                        'id' => $movimiento->id,
+                        'producto' => $movimiento->producto,
+                        'tipo' => $movimiento->tipo_movimiento,
+                        'cantidad' => $movimiento->cantidad,
+                        'motivo' => $movimiento->motivo ?? 'Sin especificar',
+                        'fecha' => Carbon::parse($movimiento->created_at)->format('d/m H:i'),
+                        'icon' => $movimiento->tipo_movimiento === 'entrada' ? '📈' : '📉',
+                        'color' => $movimiento->tipo_movimiento === 'entrada' ? 'green' : 'red'
+                    ];
+                })
+                ->toArray();
+        });
+    }
+
+    /**
+     * 🔥 NUEVO: Resumen de proveedores
+     */
+    private function getProveedoresSummary($empresaId)
+    {
+        return Cache::remember("dashboard_proveedores_summary_{$empresaId}", 600, function () use ($empresaId) {
+            $totalProveedores = DB::table('proveedores')->where('empresa_id', $empresaId)->where('activo', true)->count();
+            
+            $comprasUltimos30Dias = DB::table('compras')
+                ->join('proveedores', 'compras.proveedor_id', '=', 'proveedores.id')
+                ->where('proveedores.empresa_id', $empresaId)
+                ->where('compras.fecha_compra', '>=', Carbon::now()->subDays(30))
+                ->sum('compras.total');
+
+            $proveedorTopMes = DB::table('compras')
+                ->join('proveedores', 'compras.proveedor_id', '=', 'proveedores.id')
+                ->where('proveedores.empresa_id', $empresaId)
+                ->where('compras.fecha_compra', '>=', Carbon::now()->subDays(30))
+                ->select('proveedores.nombre', DB::raw('SUM(compras.total) as total_comprado'))
+                ->groupBy('proveedores.id', 'proveedores.nombre')
+                ->orderByDesc('total_comprado')
+                ->first();
+                
+            return [
+                'totalProveedores' => $totalProveedores,
+                'comprasUltimos30Dias' => $comprasUltimos30Dias,
+                'proveedorTopMes' => [
+                    'nombre' => $proveedorTopMes->nombre ?? 'N/A',
+                    'total' => $proveedorTopMes->total_comprado ?? 0
+                ]
+            ];
+        });
+    }
+
+    /**
+     * 🔥 NUEVO: Eventos de analytics recientes
+     */
+    private function getAnalyticsEvents($empresaId)
+    {
+        return Cache::remember("dashboard_analytics_events_{$empresaId}", 300, function () use ($empresaId) {
+            return DB::table('analytics_eventos')
+                ->where('empresa_id', $empresaId)
+                ->where('fecha_evento', '>=', Carbon::now()->subDays(1))
+                ->select('evento', 'contexto', 'fecha_evento', DB::raw('COUNT(*) as cantidad'))
+                ->groupBy('evento', 'contexto', 'fecha_evento')
+                ->orderBy('fecha_evento', 'desc')
+                ->limit(5)
+                ->get()
+                ->map(function($evento) {
+                    return [
+                        'evento' => $evento->evento,
+                        'contexto' => $evento->contexto,
+                        'cantidad' => $evento->cantidad,
+                        'fecha' => Carbon::parse($evento->fecha_evento)->format('d/m H:i'),
+                        'icon' => $this->getEventIcon($evento->evento)
+                    ];
+                })
+                ->toArray();
+        });
+    }
+
+    /**
+     * Obtener icono según el tipo de evento
+     */
+    private function getEventIcon($evento)
+    {
+        $iconos = [
+            'login' => '🚀',
+            'venta_creada' => '💰',
+            'producto_agregado' => '📦',
+            'cliente_registrado' => '👤',
+            'compra_realizada' => '🛍️',
+            'caja_abierta' => '💳',
+            'default' => '📊'
+        ];
+
+        return $iconos[$evento] ?? $iconos['default'];
+    }
 }
+

@@ -7,12 +7,12 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use App\Services\TenantService;
-use App\Models\Producto;
+use App\Models\Inventory\Producto;
 use App\Models\Cliente;
-use App\Models\Categoria;
-use App\Models\Venta;
+use App\Models\Inventory\Categoria;
+use App\Models\Sales\Venta;
 use Illuminate\Support\Facades\Auth;
-use App\Models\VentaDetalle;
+use App\Models\Sales\VentaDetalle;
 
 class PosController extends Controller
 {
@@ -180,3 +180,4 @@ class PosController extends Controller
         }
     }
 }
+

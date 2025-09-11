@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Producto;
-use App\Models\ProductoStock;
-use App\Models\InventarioMovimiento;
-use App\Models\Categoria;
+use App\Models\Inventory\Producto;
+use App\Models\Inventory\ProductoStock;
+use App\Models\Inventory\InventarioMovimiento;
+use App\Models\Inventory\Categoria;
 use Illuminate\Support\Facades\DB;
 
 class InventarioService
@@ -224,3 +224,4 @@ class InventarioService
         });
     }
 }
+

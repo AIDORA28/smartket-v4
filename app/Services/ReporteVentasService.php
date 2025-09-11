@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\Cliente;
-use App\Models\Venta;
-use App\Models\VentaDetalle;
-use App\Models\VentaPago;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaDetalle;
+use App\Models\Sales\VentaPago;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -356,3 +356,4 @@ class ReporteVentasService
         return (($actual - $anterior) / $anterior) * 100;
     }
 }
+

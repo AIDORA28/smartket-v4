@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Producto;
 use App\Models\Categoria;
-use App\Models\Empresa;
+use App\Models\Core\Empresa;
 
 class ProductoSeeder extends Seeder
 {
@@ -211,3 +211,4 @@ class ProductoSeeder extends Seeder
         }
     }
 }
+

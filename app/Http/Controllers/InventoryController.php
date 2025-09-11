@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use App\Services\TenantService;
-use App\Models\Producto;
-use App\Models\ProductoStock;
-use App\Models\InventarioMovimiento;
-use App\Models\Categoria;
+use App\Models\Inventory\Producto;
+use App\Models\Inventory\ProductoStock;
+use App\Models\Inventory\InventarioMovimiento;
+use App\Models\Inventory\Categoria;
 
 class InventoryController extends Controller
 {
@@ -358,3 +358,4 @@ class InventoryController extends Controller
         return 'normal';
     }
 }
+

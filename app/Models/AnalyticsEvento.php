@@ -276,3 +276,4 @@ class AnalyticsEvento extends Model
         return self::where('created_at', '<', $fechaLimite)->delete();
     }
 }
+

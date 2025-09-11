@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\CRM\ClienteController;
 use App\Http\Controllers\MetodoPagoController;
-use App\Http\Controllers\VentaController;
+use App\Http\Controllers\Sales\VentaController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\CajaController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\Inventory\ProductoController;
+use App\Http\Controllers\Inventory\CategoriaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +30,7 @@ Route::middleware(['auth:sanctum', 'empresa.scope'])->group(function () {
     });
 
     // ========================================
-    // MÓDULO POS - CLIENTES
+    // MÓDULO CRM - CLIENTES 
     // ========================================
     Route::prefix('clientes')->name('api.clientes.')->group(function () {
         Route::get('/', [ClienteController::class, 'index'])->name('index');
@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum', 'empresa.scope'])->group(function () {
         Route::get('/{cliente}', [ClienteController::class, 'show'])->name('show');
         Route::put('/{cliente}', [ClienteController::class, 'update'])->name('update');
         Route::delete('/{cliente}', [ClienteController::class, 'destroy'])->name('destroy');
-        Route::get('/{cliente}/historial', [ClienteController::class, 'historialCompras'])->name('historial');
+        Route::get('/{cliente}/estadisticas', [ClienteController::class, 'estadisticas'])->name('estadisticas');
     });
 
     // ========================================
@@ -156,3 +156,4 @@ Route::prefix('public')->name('api.public.')->group(function () {
     })->name('health');
 
 });
+

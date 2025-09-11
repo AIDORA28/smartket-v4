@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\FeatureFlag;
-use App\Models\Empresa;
+use App\Models\Core\FeatureFlag;
+use App\Models\Core\Empresa;
 
 class ConfiguracionSeeder extends Seeder
 {
@@ -41,3 +41,4 @@ class ConfiguracionSeeder extends Seeder
         $this->command->info('Feature flags creados para configuraciones.');
     }
 }
+

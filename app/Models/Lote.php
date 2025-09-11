@@ -252,3 +252,4 @@ class Lote extends Model
         return $fechaStr . '-' . str_pad($numero, 3, '0', STR_PAD_LEFT);
     }
 }
+

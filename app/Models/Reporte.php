@@ -251,3 +251,4 @@ class Reporte extends Model
         return $eliminados;
     }
 }
+

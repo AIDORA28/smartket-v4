@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Producto;
 use App\Models\Categoria;
-use App\Models\Empresa;
+use App\Models\Core\Empresa;
 use App\Models\ProductoStock;
 
 class ProductosSeeder extends Seeder
@@ -193,3 +193,4 @@ class ProductosSeeder extends Seeder
         $this->command->info('Productos creados exitosamente: ' . count($productos) . ' productos.');
     }
 }
+

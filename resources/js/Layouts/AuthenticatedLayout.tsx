@@ -11,37 +11,23 @@ import {
   Bars3Icon,
   XMarkIcon,
   DocumentChartBarIcon,
-  ShoppingBagIcon
+  ShoppingBagIcon,
+  BanknotesIcon,
+  TruckIcon,
+  TagIcon,
+  PresentationChartLineIcon,
+  FlagIcon,
+  StarIcon,
+  ClipboardDocumentListIcon,
+  ArchiveBoxIcon,
+  LockClosedIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
-
-interface AuthenticatedLayoutProps {
-  children: React.ReactNode;
-  header?: React.ReactNode;
-  title?: string;
-}
-
-// Interfaces for page props
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  empresa_id?: number;
-  sucursal_id?: number;
-  rol_principal?: string;
-  role?: string;
-}
-
-interface Empresa {
-  id: number;
-  nombre: string;
-  logo?: string;
-}
-
-interface Sucursal {
-  id: number;
-  nombre: string;
-}
+import MultiTenantHeader from '@/Components/core/MultiTenantHeader';
+import { AuthenticatedLayoutProps, User, Empresa, Sucursal, NavigationModule, NavigationSubModule } from '@/Types/core';
 
 interface PageProps {
   auth: {
@@ -60,208 +46,201 @@ interface PageProps {
   [key: string]: any;
 }
 
-// Función para generar navegación basada en roles
-const getNavigationByRole = (userRole: string) => {
-  // Módulos base que todos los usuarios pueden ver
-  const baseModules = [
+// Función para generar navegación basada en roles con sub-módulos
+const getAllModules = (): NavigationModule[] => {
+  return [
     { 
       name: 'Dashboard', 
       href: '/dashboard', 
       icon: ChartBarIcon,
-      current: false 
+      current: false,
+      roles: ['owner', 'admin', 'vendedor', 'cajero', 'almacenero'],
+      emoji: '🏠'
+    },
+    { 
+      name: 'Core', 
+      href: '/core/company/settings', 
+      icon: Cog6ToothIcon,
+      current: false,
+      roles: ['owner', 'admin'],
+      emoji: '⚙️',
+      expandable: true,
+      subModules: [
+        {
+          name: 'Configuración Empresa',
+          href: '/core/company/settings',
+          current: false,
+          roles: ['owner', 'admin']
+        },
+        {
+          name: 'Analytics Empresa',
+          href: '/core/company/analytics',
+          current: false,
+          roles: ['owner', 'admin']
+        },
+        {
+          name: 'Gestión de Sucursales',
+          href: '/core/branches',
+          current: false,
+          roles: ['owner', 'admin']
+        },
+        {
+          name: 'Branding',
+          href: '/core/company/branding',
+          current: false,
+          roles: ['owner', 'admin']
+        },
+        {
+          name: 'Gestión de Usuarios',
+          href: '/core/users',
+          current: false,
+          roles: ['owner', 'admin']
+        }
+      ]
+    },
+    { 
+      name: 'POS', 
+      href: '/pos', 
+      icon: ShoppingCartIcon,
+      current: false,
+      roles: ['owner', 'admin', 'vendedor', 'cajero'],
+      badge: 'Principal',
+      emoji: '💳'
+    },
+    { 
+      name: 'Cajas', 
+      href: '/cajas', 
+      icon: BanknotesIcon,
+      current: false,
+      roles: ['owner', 'admin', 'cajero'],
+      emoji: '💰'
+    },
+    { 
+      name: 'Ventas', 
+      href: '/ventas', 
+      icon: ShoppingCartIcon,
+      current: false,
+      roles: ['owner', 'admin', 'vendedor', 'cajero'],
+      emoji: '🛒'
+    },
+    { 
+      name: 'Clientes', 
+      href: '/clientes', 
+      icon: UsersIcon,
+      current: false,
+      roles: ['owner', 'admin', 'vendedor', 'cajero'],
+      emoji: '👥'
+    },
+    { 
+      name: 'Productos', 
+      href: '/productos', 
+      icon: CubeIcon,
+      current: false,
+      roles: ['owner', 'admin', 'vendedor', 'cajero', 'almacenero'],
+      emoji: '📦'
+    },
+    { 
+      name: 'Inventario', 
+      href: '/inventario', 
+      icon: ClipboardDocumentListIcon,
+      current: false,
+      roles: ['owner', 'admin', 'almacenero'],
+      emoji: '📊'
+    },
+    { 
+      name: 'Compras', 
+      href: '/compras', 
+      icon: ShoppingBagIcon,
+      current: false,
+      roles: ['owner', 'admin', 'almacenero'],
+      emoji: '🛍️'
+    },
+    { 
+      name: 'Proveedores', 
+      href: '/proveedores', 
+      icon: TruckIcon,
+      current: false,
+      roles: ['owner', 'admin', 'almacenero'],
+      emoji: '🚚'
+    },
+    { 
+      name: 'Lotes', 
+      href: '/lotes', 
+      icon: ArchiveBoxIcon,
+      current: false,
+      roles: ['owner', 'admin', 'almacenero'],
+      emoji: '📋'
+    },
+    { 
+      name: 'Reportes', 
+      href: '/reportes', 
+      icon: DocumentChartBarIcon,
+      current: false,
+      roles: ['owner', 'admin', 'almacenero'],
+      emoji: '📈'
+    },
+    { 
+      name: 'Analytics', 
+      href: '/analytics', 
+      icon: PresentationChartLineIcon,
+      current: false,
+      roles: ['owner', 'admin'],
+      badge: 'Pro',
+      emoji: '🔬'
     }
   ];
+};
 
-  // Módulos específicos por rol
-  const modules = {
-    // OWNER: Acceso completo a todos los módulos
-    owner: [
-      ...baseModules,
-      { 
-        name: 'POS', 
-        href: '/pos', 
-        icon: ShoppingCartIcon,
-        current: false,
-        badge: 'Principal'
-      },
-      { 
-        name: 'Ventas', 
-        href: '/ventas', 
-        icon: ShoppingCartIcon,
-        current: false 
-      },
-      { 
-        name: 'Productos', 
-        href: '/productos', 
-        icon: CubeIcon,
-        current: false 
-      },
-      { 
-        name: 'Inventario', 
-        href: '/inventario', 
-        icon: BuildingStorefrontIcon,
-        current: false 
-      },
-      { 
-        name: 'Clientes', 
-        href: '/clientes', 
-        icon: UsersIcon,
-        current: false 
-      },
-      { 
-        name: 'Compras', 
-        href: '/compras', 
-        icon: ShoppingBagIcon,
-        current: false 
-      },
-      { 
-        name: 'Reportes', 
-        href: '/reportes', 
-        icon: DocumentChartBarIcon,
-        current: false 
-      },
-      { 
-        name: 'Configuraciones', 
-        href: '/configuraciones', 
-        icon: Cog6ToothIcon,
-        current: false,
-        badge: 'Admin'
-      }
-    ],
+const getNavigationByRole = (userRole: string) => {
+  const allModules = getAllModules();
+  
+  return allModules.map(module => ({
+    ...module,
+    locked: !module.roles.includes(userRole),
+    accessType: getAccessType(module.name, userRole),
+    subModules: module.subModules?.map(subModule => ({
+      ...subModule,
+      locked: !subModule.roles.includes(userRole)
+    }))
+  }));
+};
 
-    // ADMIN: Sin acceso a configuraciones del sistema
-    admin: [
-      ...baseModules,
-      { 
-        name: 'POS', 
-        href: '/pos', 
-        icon: ShoppingCartIcon,
-        current: false 
-      },
-      { 
-        name: 'Ventas', 
-        href: '/ventas', 
-        icon: ShoppingCartIcon,
-        current: false 
-      },
-      { 
-        name: 'Productos', 
-        href: '/productos', 
-        icon: CubeIcon,
-        current: false 
-      },
-      { 
-        name: 'Inventario', 
-        href: '/inventario', 
-        icon: BuildingStorefrontIcon,
-        current: false 
-      },
-      { 
-        name: 'Clientes', 
-        href: '/clientes', 
-        icon: UsersIcon,
-        current: false 
-      },
-      { 
-        name: 'Reportes', 
-        href: '/reportes', 
-        icon: DocumentChartBarIcon,
-        current: false,
-        badge: 'Sucursal'
-      }
-    ],
-
-    // VENDEDOR/CAJERO: Enfoque en ventas y atención al cliente
-    vendedor: [
-      ...baseModules,
-      { 
-        name: 'POS', 
-        href: '/pos', 
-        icon: ShoppingCartIcon,
-        current: false,
-        badge: 'Principal'
-      },
-      { 
-        name: 'Ventas', 
-        href: '/ventas', 
-        icon: ShoppingCartIcon,
-        current: false 
-      },
-      { 
-        name: 'Productos', 
-        href: '/productos', 
-        icon: CubeIcon,
-        current: false,
-        badge: 'Solo lectura'
-      },
-      { 
-        name: 'Clientes', 
-        href: '/clientes', 
-        icon: UsersIcon,
-        current: false 
-      }
-    ],
-
-    // CAJERO: Similar a vendedor pero más enfocado en POS
-    cajero: [
-      ...baseModules,
-      { 
-        name: 'POS', 
-        href: '/pos', 
-        icon: ShoppingCartIcon,
-        current: false,
-        badge: 'Principal'
-      },
-      { 
-        name: 'Ventas', 
-        href: '/ventas', 
-        icon: ShoppingCartIcon,
-        current: false 
-      },
-      { 
-        name: 'Productos', 
-        href: '/productos', 
-        icon: CubeIcon,
-        current: false,
-        badge: 'Consulta'
-      },
-      { 
-        name: 'Clientes', 
-        href: '/clientes', 
-        icon: UsersIcon,
-        current: false 
-      }
-    ],
-
-    // ALMACENERO: Enfoque en inventario y productos
-    almacenero: [
-      ...baseModules,
-      { 
-        name: 'Productos', 
-        href: '/productos', 
-        icon: CubeIcon,
-        current: false,
-        badge: 'Gestión'
-      },
-      { 
-        name: 'Inventario', 
-        href: '/inventario', 
-        icon: BuildingStorefrontIcon,
-        current: false,
-        badge: 'Principal'
-      },
-      { 
-        name: 'Reportes', 
-        href: '/reportes', 
-        icon: DocumentChartBarIcon,
-        current: false,
-        badge: 'Inventario'
-      }
-    ]
+const getAccessType = (moduleName: string, userRole: string) => {
+  if (userRole === 'owner') return 'full';
+  
+  const accessMap: Record<string, Record<string, string>> = {
+    'admin': {
+      'Usuarios': 'limited',
+      'POS': 'full',
+      'Ventas': 'full', 
+      'Clientes': 'full',
+      'Productos': 'full',
+      'Inventario': 'full',
+      'Reportes': 'full'
+    },
+    'vendedor': {
+      'Productos': 'readonly',
+      'POS': 'full',
+      'Ventas': 'full',
+      'Clientes': 'full'
+    },
+    'cajero': {
+      'Productos': 'readonly',
+      'POS': 'full', 
+      'Ventas': 'full',
+      'Clientes': 'full'
+    },
+    'almacenero': {
+      'Productos': 'full',
+      'Inventario': 'full',
+      'Compras': 'full',
+      'Proveedores': 'full',
+      'Lotes': 'full',
+      'Reportes': 'limited'
+    }
   };
-
-  // Retornar módulos específicos del rol, o módulos básicos si el rol no existe
-  return modules[userRole as keyof typeof modules] || modules.vendedor;
+  
+  return accessMap[userRole]?.[moduleName] || 'full';
 };
 
 export default function AuthenticatedLayout({ 
@@ -270,11 +249,46 @@ export default function AuthenticatedLayout({
   title 
 }: AuthenticatedLayoutProps) {
   const { auth, empresa, sucursal, empresas_disponibles, sucursales_disponibles, flash } = usePage<PageProps>().props;
+  const currentUrl = usePage().url; // Obtener URL actual de Inertia
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
+  const [showTenantHeader, setShowTenantHeader] = useState(false);
+
+  // 🎯 Función para determinar qué roles pueden acceder al selector de contexto
+  const canAccessTenantSelector = (role: string): boolean => {
+    const allowedRoles = ['owner', 'gerente', 'subgerente'];
+    return allowedRoles.includes(role);
+  };
+
+  // 🎯 Determinar qué puede gestionar cada rol
+  const getTenantPermissions = (role: string) => {
+    switch (role) {
+      case 'owner':
+        return { canManageCompanies: true, canManageBranches: true };
+      case 'gerente':
+        return { canManageCompanies: true, canManageBranches: false };
+      case 'subgerente':
+        return { canManageCompanies: false, canManageBranches: true };
+      default:
+        return { canManageCompanies: false, canManageBranches: false };
+    }
+  };
+
+  // DEBUG: Log del rol del usuario
+  console.log('🔍 DEBUG - Usuario:', auth.user.name);
+  console.log('🔍 DEBUG - Rol Principal:', auth.user.rol_principal);
+  console.log('🔍 DEBUG - Usuario completo:', auth.user);
 
   // Generar navegación dinámica basada en el rol del usuario
-  const navigation = getNavigationByRole(auth.user.rol_principal || 'vendedor');
+  const userRole = auth.user.rol_principal || 'staff';
+  const navigation = getNavigationByRole(userRole);
+
+  // Actualizar el estado 'current' basado en la URL actual
+  const navigationWithCurrentState = navigation.map(item => ({
+    ...item,
+    current: currentUrl.startsWith(item.href) || (item.href === '/dashboard' && currentUrl === '/')
+  }));
 
   const handleLogout = () => {
     router.post('/logout');
@@ -320,27 +334,114 @@ export default function AuthenticatedLayout({
                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
                   <li>
                     <ul role="list" className="-mx-2 space-y-1">
-                      {navigation.map((item) => (
+                      {navigationWithCurrentState.map((item: any) => (
                         <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className={clsx(
-                              item.current
-                                ? 'bg-red-700 text-white'
-                                : 'text-red-200 hover:text-white hover:bg-red-700',
-                              'group flex items-center justify-between rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-200'
+                          {/* Módulo principal móvil */}
+                          <div>
+                            <Link
+                              href={item.locked ? '#' : (item.expandable ? '#' : item.href)}
+                              className={clsx(
+                                item.current
+                                  ? 'bg-red-700 text-white'
+                                  : item.locked 
+                                  ? 'text-red-400 bg-red-900/30 cursor-not-allowed'
+                                  : 'text-red-200 hover:text-white hover:bg-red-700',
+                                'group flex items-center justify-between rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-200 relative'
+                              )}
+                              onClick={(e) => {
+                                if (item.locked) {
+                                  e.preventDefault();
+                                  return;
+                                }
+                                if (item.expandable) {
+                                  e.preventDefault();
+                                  setExpandedModules(prev => ({
+                                    ...prev,
+                                    [item.name]: !prev[item.name]
+                                  }));
+                                }
+                              }}
+                            >
+                              <div className="flex items-center gap-x-3">
+                                <div className="relative">
+                                  <item.icon className={clsx(
+                                    "h-6 w-6 shrink-0",
+                                    item.locked && "opacity-50"
+                                  )} />
+                                  {item.locked && (
+                                    <LockClosedIcon className="h-3 w-3 absolute -top-1 -right-1 text-red-300 bg-red-800 rounded-full p-0.5" />
+                                  )}
+                                </div>
+                                <span className={item.locked ? "opacity-75" : ""}>
+                                  {item.emoji && <span className="mr-2">{item.emoji}</span>}
+                                  {item.name}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-x-2">
+                                {item.expandable && !item.locked && (
+                                  expandedModules[item.name] 
+                                    ? <ChevronDownIcon className="h-4 w-4" />
+                                    : <ChevronRightIcon className="h-4 w-4" />
+                                )}
+                                {item.badge && (
+                                  <span className={clsx(
+                                    "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+                                    item.locked 
+                                      ? "bg-gray-400 text-gray-700"
+                                      : "bg-amber-400 text-red-800"
+                                  )}>
+                                    {item.badge}
+                                  </span>
+                                )}
+                                {item.locked && (
+                                  <span className="text-xs text-red-400 font-medium">
+                                    Restringido
+                                  </span>
+                                )}
+                              </div>
+                            </Link>
+                            
+                            {/* Sub-módulos móvil */}
+                            {item.expandable && expandedModules[item.name] && item.subModules && (
+                              <ul className="mt-2 ml-6 space-y-1">
+                                {item.subModules.map((subItem: any) => (
+                                  <li key={subItem.name}>
+                                    <Link
+                                      href={subItem.locked ? '#' : subItem.href}
+                                      className={clsx(
+                                        subItem.current
+                                          ? 'bg-red-700 text-white'
+                                          : subItem.locked 
+                                          ? 'text-red-400 bg-red-900/20 cursor-not-allowed'
+                                          : 'text-red-200 hover:text-white hover:bg-red-700',
+                                        'group flex items-center justify-between rounded-md p-2 text-sm leading-6 transition-colors duration-200 relative'
+                                      )}
+                                      onClick={(e) => {
+                                        if (subItem.locked) {
+                                          e.preventDefault();
+                                        }
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-x-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-300 opacity-60" />
+                                        <span className={subItem.locked ? "opacity-75" : ""}>
+                                          {subItem.name}
+                                        </span>
+                                      </div>
+                                      {subItem.locked && (
+                                        <div className="flex items-center gap-x-2">
+                                          <LockClosedIcon className="h-3 w-3 text-red-300" />
+                                          <span className="text-xs text-red-400 font-medium">
+                                            Restringido
+                                          </span>
+                                        </div>
+                                      )}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
                             )}
-                          >
-                            <div className="flex items-center gap-x-3">
-                              <item.icon className="h-6 w-6 shrink-0" />
-                              {item.name}
-                            </div>
-                            {(item as any).badge && (
-                              <span className="inline-flex items-center rounded-full bg-amber-400 px-2 py-0.5 text-xs font-medium text-red-800">
-                                {(item as any).badge}
-                              </span>
-                            )}
-                          </Link>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -378,27 +479,114 @@ export default function AuthenticatedLayout({
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>
                 <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
+                  {navigationWithCurrentState.map((item: any) => (
                     <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className={clsx(
-                          item.current
-                            ? 'bg-red-700 text-white'
-                            : 'text-red-200 hover:text-white hover:bg-red-700',
-                          'group flex items-center justify-between rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-200'
+                      {/* Módulo principal */}
+                      <div>
+                        <Link
+                          href={item.locked ? '#' : (item.expandable ? '#' : item.href)}
+                          className={clsx(
+                            item.current
+                              ? 'bg-red-700 text-white'
+                              : item.locked 
+                              ? 'text-red-400 bg-red-900/30 cursor-not-allowed'
+                              : 'text-red-200 hover:text-white hover:bg-red-700',
+                            'group flex items-center justify-between rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-200 relative'
+                          )}
+                          onClick={(e) => {
+                            if (item.locked) {
+                              e.preventDefault();
+                              return;
+                            }
+                            if (item.expandable) {
+                              e.preventDefault();
+                              setExpandedModules(prev => ({
+                                ...prev,
+                                [item.name]: !prev[item.name]
+                              }));
+                            }
+                          }}
+                        >
+                          <div className="flex items-center gap-x-3">
+                            <div className="relative">
+                              <item.icon className={clsx(
+                                "h-6 w-6 shrink-0",
+                                item.locked && "opacity-50"
+                              )} />
+                              {item.locked && (
+                                <LockClosedIcon className="h-3 w-3 absolute -top-1 -right-1 text-red-300 bg-red-800 rounded-full p-0.5" />
+                              )}
+                            </div>
+                            <span className={item.locked ? "opacity-75" : ""}>
+                              {item.emoji && <span className="mr-2">{item.emoji}</span>}
+                              {item.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-x-2">
+                            {item.expandable && !item.locked && (
+                              expandedModules[item.name] 
+                                ? <ChevronDownIcon className="h-4 w-4" />
+                                : <ChevronRightIcon className="h-4 w-4" />
+                            )}
+                            {item.badge && (
+                              <span className={clsx(
+                                "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+                                item.locked 
+                                  ? "bg-gray-400 text-gray-700"
+                                  : "bg-amber-400 text-red-800"
+                              )}>
+                                {item.badge}
+                              </span>
+                            )}
+                            {item.locked && (
+                              <span className="text-xs text-red-400 font-medium">
+                                Restringido
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+                        
+                        {/* Sub-módulos */}
+                        {item.expandable && expandedModules[item.name] && item.subModules && (
+                          <ul className="mt-2 ml-6 space-y-1">
+                            {item.subModules.map((subItem: any) => (
+                              <li key={subItem.name}>
+                                <Link
+                                  href={subItem.locked ? '#' : subItem.href}
+                                  className={clsx(
+                                    subItem.current
+                                      ? 'bg-red-700 text-white'
+                                      : subItem.locked 
+                                      ? 'text-red-400 bg-red-900/20 cursor-not-allowed'
+                                      : 'text-red-200 hover:text-white hover:bg-red-700',
+                                    'group flex items-center justify-between rounded-md p-2 text-sm leading-6 transition-colors duration-200 relative'
+                                  )}
+                                  onClick={(e) => {
+                                    if (subItem.locked) {
+                                      e.preventDefault();
+                                    }
+                                  }}
+                                >
+                                  <div className="flex items-center gap-x-3">
+                                    <div className="w-2 h-2 rounded-full bg-red-300 opacity-60" />
+                                    <span className={subItem.locked ? "opacity-75" : ""}>
+                                      {subItem.name}
+                                    </span>
+                                  </div>
+                                  {subItem.locked && (
+                                    <div className="flex items-center gap-x-2">
+                                      <LockClosedIcon className="h-3 w-3 text-red-300" />
+                                      <span className="text-xs text-red-400 font-medium">
+                                        Restringido
+                                      </span>
+                                    </div>
+                                  )}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
                         )}
-                      >
-                        <div className="flex items-center gap-x-3">
-                          <item.icon className="h-6 w-6 shrink-0" />
-                          {item.name}
-                        </div>
-                        {(item as any).badge && (
-                          <span className="inline-flex items-center rounded-full bg-amber-400 px-2 py-0.5 text-xs font-medium text-red-800">
-                            {(item as any).badge}
-                          </span>
-                        )}
-                      </Link>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -449,7 +637,8 @@ export default function AuthenticatedLayout({
                     <h1 className="text-lg font-bold text-gray-900">
                       {empresa?.nombre || 'Empresa'}
                     </h1>
-                    {empresa && (
+                    {/* Solo el owner ve el plan */}
+                    {userRole === 'owner' && empresa && (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                         Plan PROFESIONAL
                       </span>
@@ -460,6 +649,10 @@ export default function AuthenticatedLayout({
                       <BuildingStorefrontIcon className="h-4 w-4 mr-1" />
                       {sucursal?.nombre || 'Sucursal Principal'}
                     </span>
+                    {/* Solo el owner puede cambiar de sucursal */}
+                    {userRole === 'owner' && sucursales_disponibles?.length > 1 && (
+                      <ChevronDownIcon className="h-4 w-4 text-gray-400 ml-1 cursor-pointer" />
+                    )}
                   </div>
                 </div>
                 
@@ -477,6 +670,39 @@ export default function AuthenticatedLayout({
             
             {/* Acciones rápidas y usuario */}
             <div className="flex items-center gap-x-4 lg:gap-x-6">
+              {/* Botón de Contexto Multi-Tenant (solo para roles permitidos) */}
+              {canAccessTenantSelector(userRole) && (
+                <button
+                  onClick={() => setShowTenantHeader(!showTenantHeader)}
+                  className={`relative flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 hover:scale-105 ${
+                    showTenantHeader 
+                      ? 'bg-blue-100 text-blue-600 shadow-md' 
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                  }`}
+                  title={`${showTenantHeader ? 'Ocultar' : 'Mostrar'} gestión de contexto`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                  {/* Indicador de rol */}
+                  {userRole === 'owner' && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-green-500 text-white text-xs font-bold rounded-full">
+                      👑
+                    </span>
+                  )}
+                  {userRole === 'gerente' && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-blue-500 text-white text-xs font-bold rounded-full">
+                      🏢
+                    </span>
+                  )}
+                  {userRole === 'subgerente' && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 bg-purple-500 text-white text-xs font-bold rounded-full">
+                      🏪
+                    </span>
+                  )}
+                </button>
+              )}
+              
               {/* Notificaciones */}
               <div className="relative">
                 <button
@@ -539,23 +765,70 @@ export default function AuthenticatedLayout({
                             className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                             onClick={() => setShowUserMenu(false)}
                           >
-                            <svg className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            Ver perfil
+                            <UserCircleIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                            👤 Mi Perfil
                           </Link>
                           
                           <Link
-                            href="/settings"
+                            href="/configuraciones"
                             className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                             onClick={() => setShowUserMenu(false)}
                           >
-                            <svg className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Configuración
+                            <Cog6ToothIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                            ⚙️ Configuraciones
                           </Link>
+                          
+                          {/* Opciones solo para Owner */}
+                          {userRole === 'owner' && (
+                            <>
+                              <Link
+                                href="/sucursales"
+                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                onClick={() => setShowUserMenu(false)}
+                              >
+                                <BuildingStorefrontIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                                🏬 Gestión de Sucursales
+                              </Link>
+                              
+                              <Link
+                                href="/empresa/rubros"
+                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                onClick={() => setShowUserMenu(false)}
+                              >
+                                <TagIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                                🏷️ Gestión de Rubros
+                              </Link>
+                              
+                              <Link
+                                href="/metodos-pago"
+                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                onClick={() => setShowUserMenu(false)}
+                              >
+                                <BanknotesIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                                💳 Métodos de Pago
+                              </Link>
+                              
+                              <Link
+                                href="/core/users"
+                                className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                onClick={() => setShowUserMenu(false)}
+                              >
+                                <UsersIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                                👥 Gestión de Usuarios
+                              </Link>
+                              
+                              <div className="border-t border-gray-100 mt-1 pt-1">
+                                <Link
+                                  href="/planes"
+                                  className="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                  onClick={() => setShowUserMenu(false)}
+                                >
+                                  <StarIcon className="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                                  ⭐ Administrar Plan
+                                </Link>
+                              </div>
+                            </>
+                          )}
                         </div>
                         
                         <div className="border-t border-gray-100">
@@ -563,10 +836,8 @@ export default function AuthenticatedLayout({
                             onClick={handleLogout}
                             className="group flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                           >
-                            <svg className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            Cerrar sesión
+                            <ArrowRightOnRectangleIcon className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-500" />
+                            🚪 Cerrar sesión
                           </button>
                         </div>
                       </div>
@@ -577,6 +848,17 @@ export default function AuthenticatedLayout({
             </div>
           </div>
         </div>
+
+        {/* Multi-Tenant Header - Controlado por estado showTenantHeader */}
+        {showTenantHeader && canAccessTenantSelector(auth.user.rol_principal) && (
+          <MultiTenantHeader
+            user={auth.user}
+            empresa={empresa}
+            sucursal={sucursal}
+            empresasDisponibles={empresas_disponibles || []}
+            sucursalesDisponibles={sucursales_disponibles || []}
+          />
+        )}
 
         <main className="py-10">
           <div className="px-4 sm:px-6 lg:px-8">

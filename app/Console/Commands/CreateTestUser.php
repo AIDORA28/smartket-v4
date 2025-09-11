@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
+use App\Models\Core\User;
 use Illuminate\Console\Command;
 
 class CreateTestUser extends Command
@@ -38,3 +38,4 @@ class CreateTestUser extends Command
         return 0;
     }
 }
+

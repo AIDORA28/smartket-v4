@@ -1,5 +1,41 @@
 # 📚 DOCUMENTACIÓN SMARTKET V4
 
+## 🎯 **ORGANIZACIÓN MODULAR**
+
+La documentación está organizada por módulos para facilitar el desarrollo colaborativo:
+
+### 📁 **[CORE MODULE](./core/)** ✅ **COMPLETADO**
+**Sistema base: Multi-tenant, Company & Branch Management**
+- [📖 Documentación completa](./core/README.md)
+- [🎨 Guía Frontend Development](./core/FRONTEND_CORE_DEVELOPMENT_GUIDE.md)
+- [💳 Sistema de Planes](./core/CORE_PLANS_INTERFACES.md)
+- [👑 Owner Dashboard](./core/OWNER_DASHBOARD_DESIGN.md)
+
+**Estado**: Backend 100% (107 APIs), Frontend estructura lista
+
+### 📁 **INVENTORY MODULE** ⏳ **PRÓXIMO**
+**Gestión de inventarios, productos y stock**
+- Catálogo de productos
+- Control de stock y movimientos
+- Gestión de proveedores
+- Órdenes de compra
+
+### 📁 **SALES MODULE** ⏳ **PRÓXIMO**  
+**Punto de venta y facturación**
+- POS (Point of Sale)
+- Generación de facturas
+- Gestión de clientes
+- Métodos de pago
+
+### 📁 **REPORTING MODULE** ⏳ **FUTURO**
+**Reportes y analytics avanzados**
+- Dashboards ejecutivos
+- Reportes personalizados
+- Analytics predictivos
+- Exportación de datos
+
+---
+
 ## 🎯 **DOCUMENTOS PRINCIPALES (Resúmenes Ejecutivos)**
 
 ### �️ [ARQUITECTURA COMPLETA](RESUMEN_ARQUITECTURA.md)
@@ -118,10 +154,35 @@ php artisan serve & npm run dev
 ```
 
 ### 📚 **Orden de Lectura Recomendado:**
-1. **RESUMEN_ARQUITECTURA.md** - Entender el sistema completo
-2. **SUPABASE_SETUP.md** - Configurar base de datos
-3. **RESUMEN_ESPECIFICACIONES.md** - Detalles técnicos
-4. **RESUMEN_MIGRACION_INERTIA.md** - Plan de modernización
+1. **[CORE MODULE](./core/README.md)** - Módulo base completado
+2. **RESUMEN_ARQUITECTURA.md** - Entender el sistema completo
+3. **SUPABASE_SETUP.md** - Configurar base de datos
+4. **RESUMEN_ESPECIFICACIONES.md** - Detalles técnicos
+5. **RESUMEN_MIGRACION_INERTIA.md** - Plan de modernización
+
+---
+
+## 📁 **ESTRUCTURA DOCUMENTACIÓN**
+
+```
+docs/
+├── core/                          # ✅ Módulo Core (Completado)
+│   ├── README.md                  # Índice documentación Core
+│   ├── FRONTEND_CORE_DEVELOPMENT_GUIDE.md
+│   ├── CORE_PLANS_INTERFACES.md
+│   ├── OWNER_DASHBOARD_DESIGN.md
+│   └── ...                       # 9 documentos Core
+├── inventory/                     # ⏳ Módulo Inventory (Próximo)
+├── sales/                         # ⏳ Módulo Sales (Próximo)
+├── reporting/                     # ⏳ Módulo Reporting (Futuro)
+└── ...                           # Docs generales del proyecto
+```
+
+**Beneficios de la organización modular:**
+- ✅ **Desarrollo paralelo**: Equipos pueden trabajar en módulos independientes
+- ✅ **Documentación enfocada**: Fácil encontrar info específica por módulo  
+- ✅ **Escalabilidad**: Agregar nuevos módulos sin afectar existentes
+- ✅ **Mantenimiento**: Actualizar docs de módulos por separado
 
 ---
 

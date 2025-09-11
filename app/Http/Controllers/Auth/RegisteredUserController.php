@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Empresa;
-use App\Models\Sucursal;
-use App\Models\Plan;
-use App\Models\Rubro;
+use App\Models\Core\User;
+use App\Models\Core\Empresa;
+use App\Models\Core\Sucursal;
+use App\Models\Core\Plan;
+use App\Models\Core\Rubro;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -196,3 +196,4 @@ class RegisteredUserController extends Controller
         }
     }
 }
+

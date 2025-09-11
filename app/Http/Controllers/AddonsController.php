@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PlanAddon;
-use App\Models\EmpresaAddon;
-use App\Models\Plan;
+use App\Models\Core\PlanAddon;
+use App\Models\Core\EmpresaAddon;
+use App\Models\Core\Plan;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -185,3 +185,4 @@ class AddonsController extends Controller
         ]);
     }
 }
+

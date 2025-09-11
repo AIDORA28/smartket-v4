@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\Lote;
-use App\Models\Producto;
-use App\Models\InventarioMovimiento;
-use App\Models\VentaDetalle;
+use App\Models\Inventory\Producto;
+use App\Models\Inventory\InventarioMovimiento;
+use App\Models\Sales\VentaDetalle;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -197,3 +197,4 @@ class LoteService
         return $count;
     }
 }
+

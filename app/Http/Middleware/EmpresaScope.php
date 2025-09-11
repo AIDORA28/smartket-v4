@@ -22,3 +22,4 @@ class EmpresaScope
         return $next($request);
     }
 }
+

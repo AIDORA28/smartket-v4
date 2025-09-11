@@ -45,7 +45,8 @@ class HandleInertiaRequests extends Middleware
                     'email_verified_at' => $request->user()->email_verified_at,
                     'empresa_id' => $request->user()->empresa_id,
                     'sucursal_id' => $request->user()->sucursal_id,
-                    'role' => $request->user()->role ?? 'user',
+                    'rol_principal' => $request->user()->rol_principal ?? 'staff',
+                    'activo' => $request->user()->activo ?? true,
                 ] : null,
             ],
             'empresa' => function () use ($request) {
@@ -73,7 +74,7 @@ class HandleInertiaRequests extends Middleware
                 if (!$request->user()) return [];
                 
                 return $request->user()->empresasAccesibles()
-                    ->get(['id', 'nombre', 'logo'])
+                    ->get()
                     ->toArray();
             },
             'sucursales_disponibles' => function () use ($request) {
@@ -86,7 +87,8 @@ class HandleInertiaRequests extends Middleware
                 
                 return $empresa->sucursales()
                     ->where('activa', true)
-                    ->get(['id', 'nombre'])
+                    ->select(['sucursales.id', 'sucursales.nombre'])
+                    ->get()
                     ->toArray();
             },
             'flash' => [
@@ -102,3 +104,4 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 }
+

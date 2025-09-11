@@ -78,3 +78,4 @@ class Caja extends Model
         return "CJ-" . str_pad($count, 3, '0', STR_PAD_LEFT);
     }
 }
+

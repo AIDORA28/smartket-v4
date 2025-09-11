@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Empresa;
-use App\Models\Sucursal;
+use App\Models\Core\Empresa;
+use App\Models\Core\Sucursal;
 use App\Models\Caja;
 
 class CajaSeeder extends Seeder
@@ -53,3 +53,4 @@ class CajaSeeder extends Seeder
         $this->command->info("Total cajas creadas: " . Caja::count());
     }
 }
+

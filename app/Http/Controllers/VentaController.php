@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Venta;
+use App\Models\Sales\Venta;
 use App\Services\VentaService;
 use App\Services\TenantService;
 use App\Services\ReporteVentasService;

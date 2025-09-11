@@ -4,10 +4,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Lote;
-use App\Models\Producto;
+use App\Models\Inventory\Producto;
 use App\Models\Proveedor;
-use App\Models\Empresa;
-use App\Models\InventarioMovimiento;
+use App\Models\Core\Empresa;
+use App\Models\Inventory\InventarioMovimiento;
 use Carbon\Carbon;
 
 class LoteSeeder extends Seeder
@@ -226,3 +226,4 @@ class LoteSeeder extends Seeder
         }
     }
 }
+

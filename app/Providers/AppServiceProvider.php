@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Cargar alias de modelos modulares
+        require_once app_path('Models/InventoryAliases.php');
     }
 }
+

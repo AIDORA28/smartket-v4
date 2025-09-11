@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Venta;
-use App\Models\VentaPago;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaPago;
 use App\Services\PagoService;
 use App\Services\TenantService;
 use Illuminate\Http\Request;
@@ -382,3 +382,4 @@ class PagoController extends Controller
         }
     }
 }
+

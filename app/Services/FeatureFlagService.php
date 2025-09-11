@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\FeatureFlag;
+use App\Models\Core\FeatureFlag;
 
 class FeatureFlagService
 {
@@ -59,3 +59,4 @@ class FeatureFlagService
         }
     }
 }
+

@@ -4,6 +4,8 @@ import { clsx } from 'clsx';
 import AuthenticatedLayout from '../Layouts/AuthenticatedLayout';
 import { Button } from '../Components/ui/Button';
 import { Card, CardHeader, CardBody } from '../Components/ui/Card';
+import MetricCard from '@/Components/core/shared/MetricCard';
+import ActionCard from '@/Components/core/shared/ActionCard';
 import {
   PlusIcon,
   MinusIcon,
@@ -182,34 +184,36 @@ export default function POS({ auth, products, clients, categories }: POSProps) {
             {/* Productos */}
             <div className="lg:col-span-2 space-y-6">
               {/* Filtros */}
-              <Card>
-                <CardBody>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1 relative">
-                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="text"
-                        placeholder="Buscar productos..."
-                        className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                    <select
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                      <option value="all">Todas las categorías</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
+              <MetricCard
+                title="Filtros de Productos"
+                icon={<MagnifyingGlassIcon className="w-6 h-6" />}
+                color="blue"
+              >
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Buscar productos..."
+                      className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                   </div>
-                </CardBody>
-              </Card>
+                  <select
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="all">Todas las categorías</option>
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </MetricCard>
 
               {/* Grid de Productos */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -263,44 +267,41 @@ export default function POS({ auth, products, clients, categories }: POSProps) {
             {/* Carrito y Checkout */}
             <div className="space-y-6">
               {/* Cliente */}
-              <Card>
-                <CardHeader>
+              <MetricCard
+                title="Cliente"
+                icon={<UserIcon className="w-6 h-6" />}
+                color="green"
+                action={
+                  <ActionCard
+                    icon={<UserIcon className="w-4 h-4" />}
+                    title="Seleccionar"
+                    onClick={() => setShowClientModal(true)}
+                    variant="ghost"
+                  />
+                }
+              >
+                {selectedClient ? (
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">Cliente</h3>
+                    <div>
+                      <p className="font-medium text-gray-900">{selectedClient.nombre}</p>
+                      {selectedClient.telefono && (
+                        <p className="text-sm text-gray-500">{selectedClient.telefono}</p>
+                      )}
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setShowClientModal(true)}
+                      onClick={() => setSelectedClient(null)}
                     >
-                      <UserIcon className="w-4 h-4 mr-2" />
-                      Seleccionar
+                      <XMarkIcon className="w-4 h-4" />
                     </Button>
                   </div>
-                </CardHeader>
-                <CardBody>
-                  {selectedClient ? (
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-gray-900">{selectedClient.nombre}</p>
-                        {selectedClient.telefono && (
-                          <p className="text-sm text-gray-500">{selectedClient.telefono}</p>
-                        )}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedClient(null)}
-                      >
-                        <XMarkIcon className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 text-center py-4">
-                      Cliente general
-                    </p>
-                  )}
-                </CardBody>
-              </Card>
+                ) : (
+                  <p className="text-gray-500 text-center py-4">
+                    Cliente general
+                  </p>
+                )}
+              </MetricCard>
 
               {/* Carrito */}
               <Card>

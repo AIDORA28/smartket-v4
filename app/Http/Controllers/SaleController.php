@@ -7,10 +7,10 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use App\Services\TenantService;
-use App\Models\Venta;
-use App\Models\VentaDetalle;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaDetalle;
 use App\Models\Cliente;
-use App\Models\Producto;
+use App\Models\Inventory\Producto;
 use Carbon\Carbon;
 
 class SaleController extends Controller
@@ -449,3 +449,4 @@ class SaleController extends Controller
         }
     }
 }
+

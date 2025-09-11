@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Models\AnalyticsEvento;
-use App\Models\Venta;
-use App\Models\Producto;
-use App\Models\ProductoStock;
+use App\Models\Sales\Venta;
+use App\Models\Inventory\Producto;
+use App\Models\Inventory\ProductoStock;
 use App\Models\Cliente;
 use App\Models\CajaSesion;
-use App\Models\InventarioMovimiento;
+use App\Models\Inventory\InventarioMovimiento;
 use App\Models\Compra;
 use App\Models\Lote;
 use Illuminate\Support\Facades\DB;
@@ -411,3 +411,4 @@ class AnalyticsService
         ];
     }
 }
+

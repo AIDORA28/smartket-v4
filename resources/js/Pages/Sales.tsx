@@ -4,6 +4,8 @@ import { clsx } from 'clsx';
 import AuthenticatedLayout from '../Layouts/AuthenticatedLayout';
 import { Button } from '../Components/ui/Button';
 import { Card, CardHeader, CardBody } from '../Components/ui/Card';
+import MetricCard from '@/Components/core/shared/MetricCard';
+import ActionCard from '@/Components/core/shared/ActionCard';
 import {
   MagnifyingGlassIcon,
   EyeIcon,
@@ -169,67 +171,47 @@ export default function Sales({ auth, sales, stats, filters }: SalesPageProps) {
       <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
           
-          {/* Stats Cards */}
+          {/* Stats Cards - Usando MetricCard */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">
-                    ${stats.total_ventas.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-blue-700">Total Ventas</div>
-                </div>
-                <CurrencyDollarIcon className="w-8 h-8 text-blue-500" />
-              </div>
-            </div>
+            <MetricCard
+              title="Total Ventas"
+              value={`S/. ${stats.total_ventas.toLocaleString()}`}
+              emoji="💰"
+              color="blue"
+              subtitle="ventas totales"
+            />
             
-            <div className="bg-green-50 p-4 rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {stats.total_cantidad}
-                  </div>
-                  <div className="text-sm text-green-700">Transacciones</div>
-                </div>
-                <ShoppingCartIcon className="w-8 h-8 text-green-500" />
-              </div>
-            </div>
+            <MetricCard
+              title="Transacciones"
+              value={stats.total_cantidad.toString()}
+              emoji="🛒"
+              color="green"
+              subtitle="completadas"
+            />
             
-            <div className="bg-purple-50 p-4 rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">
-                    ${stats.promedio_ticket.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-purple-700">Ticket Promedio</div>
-                </div>
-                <CalendarIcon className="w-8 h-8 text-purple-500" />
-              </div>
-            </div>
+            <MetricCard
+              title="Ticket Promedio"
+              value={`S/. ${stats.promedio_ticket.toLocaleString()}`}
+              emoji="📊"
+              color="purple"
+              subtitle="por venta"
+            />
             
-            <div className="bg-green-50 p-4 rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-green-600">
-                    ${stats.ventas_efectivo.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-green-700">Efectivo</div>
-                </div>
-                <BanknotesIcon className="w-8 h-8 text-green-500" />
-              </div>
-            </div>
+            <MetricCard
+              title="Efectivo"
+              value={`S/. ${stats.ventas_efectivo.toLocaleString()}`}
+              emoji="💵"
+              color="green"
+              subtitle="en efectivo"
+            />
             
-            <div className="bg-blue-50 p-4 rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">
-                    ${stats.ventas_tarjeta.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-blue-700">Tarjeta</div>
-                </div>
-                <CreditCardIcon className="w-8 h-8 text-blue-500" />
-              </div>
-            </div>
+            <MetricCard
+              title="Tarjeta"
+              value={`S/. ${stats.ventas_tarjeta.toLocaleString()}`}
+              emoji="💳"
+              color="blue"
+              subtitle="con tarjeta"
+            />
           </div>
 
           {/* Filtros */}

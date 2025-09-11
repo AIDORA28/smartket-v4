@@ -137,3 +137,4 @@ class CajaSesion extends Model
         $this->update(['monto_ventas_efectivo' => $total]);
     }
 }
+

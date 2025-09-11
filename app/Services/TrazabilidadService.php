@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Models\Lote;
-use App\Models\InventarioMovimiento;
+use App\Models\Inventory\InventarioMovimiento;
 use App\Models\CompraItem;
-use App\Models\VentaDetalle;
+use App\Models\Sales\VentaDetalle;
 use Illuminate\Support\Collection;
 
 class TrazabilidadService
@@ -228,3 +228,4 @@ class TrazabilidadService
         return $resumen;
     }
 }
+

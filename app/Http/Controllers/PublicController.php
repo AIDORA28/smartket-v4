@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Plan;
+use App\Models\Core\Plan;
 
 class PublicController extends Controller
 {
@@ -171,3 +171,4 @@ class PublicController extends Controller
         ];
     }
 }
+

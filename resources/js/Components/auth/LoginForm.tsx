@@ -4,14 +4,49 @@ import Input from '@/Components/auth/Input';
 import Button from '@/Components/auth/Button';
 import Checkbox from '@/Components/auth/Checkbox';
 import StatusMessage from '@/Components/auth/StatusMessage';
+import { LoginFormProps } from '@/Types/auth';
 
-// Declare route function from Ziggy
 declare function route(name: string, params?: any): string;
 
-interface LoginFormProps {
-    status?: string;
-    canResetPassword?: string;
-}
+const EmailIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  </svg>
+);
+
+const PasswordIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+  </svg>
+);
+
+const RememberSection = ({ 
+  remember, 
+  onRememberChange, 
+  canResetPassword 
+}: { 
+  remember: boolean; 
+  onRememberChange: (checked: boolean) => void; 
+  canResetPassword?: string; 
+}) => (
+  <div className="flex items-center justify-between">
+    <Checkbox
+      name="remember"
+      checked={remember}
+      onChange={(e) => onRememberChange(e.target.checked)}
+      label="Recordarme"
+    />
+    
+    {canResetPassword && (
+      <a
+        href={canResetPassword}
+        className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors"
+      >
+        ¿Olvidaste tu contraseña?
+      </a>
+    )}
+  </div>
+);
 
 export default function LoginForm({ status, canResetPassword }: LoginFormProps) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -33,7 +68,6 @@ export default function LoginForm({ status, canResetPassword }: LoginFormProps) 
 
     return (
         <>
-            {/* Status Message */}
             {status && (
                 <div className="mb-6">
                     <StatusMessage type="success" message={status} />
@@ -41,7 +75,6 @@ export default function LoginForm({ status, canResetPassword }: LoginFormProps) 
             )}
 
             <form onSubmit={submit} className="space-y-6">
-                {/* Email */}
                 <Input
                     id="email"
                     type="email"
@@ -52,14 +85,9 @@ export default function LoginForm({ status, canResetPassword }: LoginFormProps) 
                     autoComplete="username"
                     placeholder="tu@empresa.com"
                     required
-                    icon={
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                    }
+                    icon={<EmailIcon />}
                 />
 
-                {/* Password */}
                 <Input
                     id="password"
                     type="password"
@@ -70,33 +98,15 @@ export default function LoginForm({ status, canResetPassword }: LoginFormProps) 
                     autoComplete="current-password"
                     placeholder="••••••••"
                     required
-                    icon={
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                    }
+                    icon={<PasswordIcon />}
                 />
 
-                {/* Remember & Forgot */}
-                <div className="flex items-center justify-between">
-                    <Checkbox
-                        name="remember"
-                        checked={data.remember}
-                        onChange={(e) => setData('remember', e.target.checked)}
-                        label="Recordarme"
-                    />
-                    
-                    {canResetPassword && (
-                        <a
-                            href={canResetPassword}
-                            className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors"
-                        >
-                            ¿Olvidaste tu contraseña?
-                        </a>
-                    )}
-                </div>
+                <RememberSection
+                    remember={data.remember}
+                    onRememberChange={(checked) => setData('remember', checked)}
+                    canResetPassword={canResetPassword}
+                />
 
-                {/* Submit Button */}
                 <Button
                     type="submit"
                     size="lg"

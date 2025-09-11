@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\EmpresaAddon;
-use App\Models\Empresa;
-use App\Models\PlanAddon;
+use App\Models\Core\EmpresaAddon;
+use App\Models\Core\Empresa;
+use App\Models\Core\PlanAddon;
 
 class EmpresaAddonSeeder extends Seeder
 {
@@ -155,3 +155,4 @@ class EmpresaAddonSeeder extends Seeder
         }
     }
 }
+

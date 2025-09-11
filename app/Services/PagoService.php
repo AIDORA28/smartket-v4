@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\MetodoPago;
-use App\Models\Venta;
-use App\Models\VentaPago;
+use App\Models\Sales\Venta;
+use App\Models\Sales\VentaPago;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -307,3 +307,4 @@ class PagoService
         return ($suma % 10) === 0;
     }
 }
+
